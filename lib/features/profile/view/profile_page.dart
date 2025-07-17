@@ -4,6 +4,7 @@ import '../viewmodel/profile_viewmodel.dart';
 import '../model/user_profile.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 import '../../../core/theme/theme_provider.dart';
 import '../../../core/theme/theme_model.dart';
 
@@ -37,7 +38,25 @@ class ProfilePage extends ConsumerWidget {
               onTap: () async {
                 final XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
                 if (image != null) {
-                  vm.updateAvatar(image.path);
+                  final cropped = await ImageCropper().cropImage(
+                    sourcePath: image.path,
+                    aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+                    uiSettings: [
+                      AndroidUiSettings(
+                        toolbarTitle: '裁切照片',
+                        toolbarColor: appTheme.color,
+                        toolbarWidgetColor: Colors.white,
+                        lockAspectRatio: true,
+                      ),
+                      IOSUiSettings(title: '裁切照片'),
+                      WebUiSettings(
+                        context: context,
+                      ),
+                    ],
+                  );
+                  if (cropped != null) {
+                    vm.updateAvatar(cropped.path);
+                  }
                 }
               },
               child: CircleAvatar(

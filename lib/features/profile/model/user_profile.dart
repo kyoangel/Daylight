@@ -28,4 +28,24 @@ class UserProfile {
       themeColorHex: themeColorHex ?? this.themeColorHex,
     );
   }
+
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
+    return UserProfile(
+      nickname: json['nickname'] ?? '',
+      reminderTime: DateTime.tryParse(json['reminderTime'] ?? '') ?? DateTime.now(),
+      sosContact: json['sosContact'] ?? '',
+      avatarUrl: json['avatarUrl'],
+      themeColorHex: json['themeColorHex'] ?? '#75C9E0',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nickname': nickname,
+      'reminderTime': reminderTime.toIso8601String(),
+      'sosContact': sosContact,
+      'avatarUrl': avatarUrl,
+      'themeColorHex': themeColorHex,
+    };
+  }
 } 
