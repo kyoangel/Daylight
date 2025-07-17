@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../core/theme/theme_provider.dart';
+import '../core/theme/theme_model.dart';
 import '../features/onboarding/view/onboarding_page.dart';
 import '../features/daily/view/daily_page.dart';
 import '../features/companion/view/companion_page.dart';
@@ -6,36 +9,41 @@ import '../features/diary/view/diary_page.dart';
 import '../features/sos/view/sos_page.dart';
 import '../features/profile/view/profile_page.dart';
 
-class DaylightApp extends StatelessWidget {
+class DaylightApp extends ConsumerWidget {
   const DaylightApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appTheme = ref.watch(themeNotifierProvider);
     return MaterialApp(
       title: '一日之光',
       theme: ThemeData(
-        colorScheme: ColorScheme(
-          brightness: Brightness.light,
-          primary: const Color(0xFF7C6AE6), // 柔和紫
-          onPrimary: Colors.white,
-          secondary: const Color(0xFFF6C7B6), // 溫暖米杏
-          onSecondary: Colors.black87,
-          error: Colors.red.shade400,
-          onError: Colors.white,
-          background: const Color(0xFFF8F6F1), // 米白
-          onBackground: Colors.black87,
-          surface: Colors.white,
-          onSurface: Colors.black87,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: appTheme.color,
+          primary: appTheme.color,
+          secondary: appTheme.color.withOpacity(0.7),
         ),
-        scaffoldBackgroundColor: const Color(0xFFF8F6F1),
+        appBarTheme: AppBarTheme(
+          backgroundColor: appTheme.color,
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: appTheme.color,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          ),
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: appTheme.color,
+        ),
+        scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Color(0xFFEDE7F6), // 淡紫灰
-          selectedItemColor: Color(0xFF7C6AE6),
-          unselectedItemColor: Color(0xFFB0AFC6),
-          selectedIconTheme: IconThemeData(color: Color(0xFF7C6AE6)),
-          unselectedIconTheme: IconThemeData(color: Color(0xFFB0AFC6)),
-          showUnselectedLabels: true,
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: appTheme.color.withOpacity(0.08),
+          selectedItemColor: appTheme.color,
+          unselectedItemColor: Colors.grey,
         ),
       ),
       home: const MainNavigation(),

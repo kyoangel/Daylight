@@ -36,6 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_hooks: ^0.20.5
   flutter_riverpod: ^2.4.9
+  shared_preferences: ^2.2.2
+  image_picker: ^1.0.7
 
 dev_dependencies:
   flutter_test:
