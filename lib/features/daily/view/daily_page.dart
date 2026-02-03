@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodel/daily_viewmodel.dart';
 import '../../../data/models/daily_entry.dart';
+import '../../../data/content/content_repository.dart';
+import '../../../data/content/models/affirmation.dart';
+import '../../../data/content/models/micro_task.dart';
 
 class DailyPage extends ConsumerStatefulWidget {
   const DailyPage({super.key});
@@ -13,11 +16,32 @@ class DailyPage extends ConsumerStatefulWidget {
 class _DailyPageState extends ConsumerState<DailyPage> {
   double _moodScore = 5;
   final TextEditingController _reflectionController = TextEditingController();
+  final ContentRepository _contentRepository = ContentRepository();
+  Affirmation? _affirmation;
+  MicroTask? _microTask;
+  bool _loadingContent = true;
 
   @override
   void dispose() {
     _reflectionController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadContent();
+  }
+
+  Future<void> _loadContent() async {
+    final affirmations = await _contentRepository.loadAffirmations();
+    final tasks = await _contentRepository.loadMicroTasks();
+    if (!mounted) return;
+    setState(() {
+      _affirmation = affirmations.isNotEmpty ? affirmations.first : null;
+      _microTask = tasks.isNotEmpty ? tasks.first : null;
+      _loadingContent = false;
+    });
   }
 
   @override
@@ -43,6 +67,34 @@ class _DailyPageState extends ConsumerState<DailyPage> {
             },
           ),
           const SizedBox(height: 12),
+          const Text('今日小任務', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          if (_loadingContent)
+            const LinearProgressIndicator()
+          else if (_microTask != null)
+            Card(
+              child: ListTile(
+                title: Text(_microTask!.title),
+                subtitle: Text(_microTask!.description),
+              ),
+            )
+          else
+            const Text('尚無任務內容'),
+          const SizedBox(height: 12),
+          const Text('今日肯定語', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          if (_loadingContent)
+            const LinearProgressIndicator()
+          else if (_affirmation != null)
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(_affirmation!.text),
+              ),
+            )
+          else
+            const Text('尚無肯定語'),
+          const SizedBox(height: 12),
           const Text('晚安反思', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           TextField(
@@ -59,9 +111,9 @@ class _DailyPageState extends ConsumerState<DailyPage> {
               final entry = DailyEntry(
                 date: DateTime.now(),
                 moodScore: _moodScore.round(),
-                microTaskId: 'default',
-                microTaskDone: true,
-                affirmationId: 'default',
+                microTaskId: _microTask?.id ?? 'default',
+                microTaskDone: _microTask != null,
+                affirmationId: _affirmation?.id ?? 'default',
                 nightReflection: _reflectionController.text.trim(),
               );
               await vm.upsertEntry(entry);
