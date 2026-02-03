@@ -8,7 +8,8 @@
       "Inhale for four counts, exhale for four counts.",
       "Repeat for a few cycles and notice your breath."
     ],
-    "tags": ["breathing", "calm"]
+    "tags": ["breathing", "calm"],
+    "weight": 3
   },
   {
     "id": "mind_002",
@@ -21,6 +22,7 @@
       "Name 2 things you can smell.",
       "Name 1 thing you can taste."
     ],
-    "tags": ["grounding"]
+    "tags": ["grounding"],
+    "weight": 2
   }
 ]

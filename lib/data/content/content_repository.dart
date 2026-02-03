@@ -35,7 +35,8 @@ class ContentRepository {
 
   Future<Affirmation?> pickAffirmation({List<String>? tags}) async {
     final items = await loadAffirmations();
-    final picked = _pickByTags(items, tags, await _historyStore.readAffirmationId());
+    final recent = await _historyStore.readAffirmationIds();
+    final picked = _pickByTags(items, tags, recent);
     if (picked != null) {
       await _historyStore.writeAffirmationId(picked.id);
     }
@@ -44,7 +45,8 @@ class ContentRepository {
 
   Future<MicroTask?> pickMicroTask({List<String>? tags}) async {
     final items = await loadMicroTasks();
-    final picked = _pickByTags(items, tags, await _historyStore.readMicroTaskId());
+    final recent = await _historyStore.readMicroTaskIds();
+    final picked = _pickByTags(items, tags, recent);
     if (picked != null) {
       await _historyStore.writeMicroTaskId(picked.id);
     }
@@ -53,20 +55,21 @@ class ContentRepository {
 
   Future<MindfulnessGuide?> pickMindfulnessGuide({List<String>? tags}) async {
     final items = await loadMindfulnessGuides();
-    final picked = _pickByTags(items, tags, await _historyStore.readMindfulnessId());
+    final recent = await _historyStore.readMindfulnessIds();
+    final picked = _pickByTags(items, tags, recent);
     if (picked != null) {
       await _historyStore.writeMindfulnessId(picked.id);
     }
     return picked;
   }
 
-  T? _pickByTags<T extends Object>(List<T> items, List<String>? tags, String? lastId) {
+  T? _pickByTags<T extends Object>(List<T> items, List<String>? tags, List<String> recentIds) {
     if (items.isEmpty) return null;
     final filtered = _filterByTags(items, tags);
     final pool = filtered.isNotEmpty ? filtered : items;
-    final withoutLast = _filterWithoutLastId(pool, lastId);
-    final finalPool = withoutLast.isNotEmpty ? withoutLast : pool;
-    return finalPool[_random.nextInt(finalPool.length)];
+    final withoutRecent = _filterWithoutRecentIds(pool, recentIds);
+    final finalPool = withoutRecent.isNotEmpty ? withoutRecent : pool;
+    return _pickWeighted(finalPool);
   }
 
   List<T> _filterByTags<T extends Object>(List<T> items, List<String>? tags) {
@@ -88,11 +91,11 @@ class ContentRepository {
     return null;
   }
 
-  List<T> _filterWithoutLastId<T extends Object>(List<T> items, String? lastId) {
-    if (lastId == null) return items;
+  List<T> _filterWithoutRecentIds<T extends Object>(List<T> items, List<String> recentIds) {
+    if (recentIds.isEmpty) return items;
     return items.where((item) {
       final id = _extractId(item);
-      return id == null || id != lastId;
+      return id == null || !recentIds.contains(id);
     }).toList();
   }
 
@@ -101,5 +104,24 @@ class ContentRepository {
     if (item is MicroTask) return item.id;
     if (item is MindfulnessGuide) return item.id;
     return null;
+  }
+
+  int _extractWeight(Object item) {
+    if (item is Affirmation) return item.weight;
+    if (item is MicroTask) return item.weight;
+    if (item is MindfulnessGuide) return item.weight;
+    return 1;
+  }
+
+  T _pickWeighted<T extends Object>(List<T> items) {
+    final weights = items.map((item) => _extractWeight(item)).toList();
+    final total = weights.fold<int>(0, (sum, w) => sum + (w <= 0 ? 1 : w));
+    final target = _random.nextInt(total);
+    var cumulative = 0;
+    for (var i = 0; i < items.length; i++) {
+      cumulative += (weights[i] <= 0 ? 1 : weights[i]);
+      if (target < cumulative) return items[i];
+    }
+    return items.first;
   }
 }

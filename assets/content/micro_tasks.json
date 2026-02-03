@@ -3,18 +3,21 @@
     "id": "task_001",
     "title": "Drink water",
     "description": "Take a few sips of water and notice the feeling.",
-    "tags": ["body", "reset"]
+    "tags": ["body", "reset"],
+    "weight": 2
   },
   {
     "id": "task_002",
     "title": "Open the window",
     "description": "Let fresh air in for one minute.",
-    "tags": ["refresh", "calm"]
+    "tags": ["refresh", "calm"],
+    "weight": 2
   },
   {
     "id": "task_003",
     "title": "Stretch gently",
     "description": "Roll your shoulders and take a slow breath.",
-    "tags": ["body", "gentle"]
+    "tags": ["body", "gentle"],
+    "weight": 1
   }
 ]

@@ -4,6 +4,7 @@ class MindfulnessGuide {
   final String duration;
   final List<String> steps;
   final List<String> tags;
+  final int weight;
 
   const MindfulnessGuide({
     required this.id,
@@ -11,6 +12,7 @@ class MindfulnessGuide {
     required this.duration,
     required this.steps,
     required this.tags,
+    required this.weight,
   });
 
   factory MindfulnessGuide.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class MindfulnessGuide {
       duration: json['duration'] ?? '',
       steps: List<String>.from(json['steps'] ?? const []),
       tags: List<String>.from(json['tags'] ?? const []),
+      weight: json['weight'] ?? 1,
     );
   }
 
@@ -30,6 +33,7 @@ class MindfulnessGuide {
       'duration': duration,
       'steps': steps,
       'tags': tags,
+      'weight': weight,
     };
   }
 }

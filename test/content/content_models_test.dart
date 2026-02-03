@@ -6,7 +6,7 @@ import 'package:daylight/data/content/models/mindfulness_guide.dart';
 
 void main() {
   test('Affirmation json roundtrip', () {
-    const model = Affirmation(id: 'a1', text: 'text', tags: ['t1']);
+    const model = Affirmation(id: 'a1', text: 'text', tags: ['t1'], weight: 2);
     final json = model.toJson();
     final decoded = Affirmation.fromJson(json);
 
@@ -21,6 +21,7 @@ void main() {
       title: 'title',
       description: 'desc',
       tags: ['tag'],
+      weight: 2,
     );
     final json = model.toJson();
     final decoded = MicroTask.fromJson(json);
@@ -38,6 +39,7 @@ void main() {
       duration: '1 min',
       steps: ['step'],
       tags: ['tag'],
+      weight: 2,
     );
     final json = model.toJson();
     final decoded = MindfulnessGuide.fromJson(json);

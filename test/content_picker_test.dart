@@ -21,13 +21,16 @@ class FakeHistoryStore extends ContentHistoryStore {
   final Map<String, String> _store = {};
 
   @override
-  Future<String?> readAffirmationId() async => _store['aff'];
+  Future<List<String>> readAffirmationIds() async =>
+      _store['aff'] == null ? [] : [_store['aff']!];
 
   @override
-  Future<String?> readMicroTaskId() async => _store['task'];
+  Future<List<String>> readMicroTaskIds() async =>
+      _store['task'] == null ? [] : [_store['task']!];
 
   @override
-  Future<String?> readMindfulnessId() async => _store['guide'];
+  Future<List<String>> readMindfulnessIds() async =>
+      _store['guide'] == null ? [] : [_store['guide']!];
 
   @override
   Future<void> writeAffirmationId(String id) async => _store['aff'] = id;
@@ -43,8 +46,8 @@ void main() {
   test('ContentRepository pickAffirmation returns matching tag', () async {
     final loader = FakeLoader({
       'assets/content/affirmations.json': [
-        {'id': 'a1', 'text': 'low', 'tags': ['low']},
-        {'id': 'a2', 'text': 'high', 'tags': ['hope']},
+        {'id': 'a1', 'text': 'low', 'tags': ['low'], 'weight': 1},
+        {'id': 'a2', 'text': 'high', 'tags': ['hope'], 'weight': 1},
       ],
     });
 
@@ -61,7 +64,7 @@ void main() {
   test('ContentRepository pickMicroTask falls back', () async {
     final loader = FakeLoader({
       'assets/content/micro_tasks.json': [
-        {'id': 't1', 'title': 't', 'description': 'd', 'tags': ['x']},
+        {'id': 't1', 'title': 't', 'description': 'd', 'tags': ['x'], 'weight': 1},
       ],
     });
 

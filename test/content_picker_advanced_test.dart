@@ -20,13 +20,16 @@ class FakeHistoryStore extends ContentHistoryStore {
   final Map<String, String> _store = {};
 
   @override
-  Future<String?> readAffirmationId() async => _store['aff'];
+  Future<List<String>> readAffirmationIds() async =>
+      _store['aff'] == null ? [] : [_store['aff']!];
 
   @override
-  Future<String?> readMicroTaskId() async => _store['task'];
+  Future<List<String>> readMicroTaskIds() async =>
+      _store['task'] == null ? [] : [_store['task']!];
 
   @override
-  Future<String?> readMindfulnessId() async => _store['guide'];
+  Future<List<String>> readMindfulnessIds() async =>
+      _store['guide'] == null ? [] : [_store['guide']!];
 
   @override
   Future<void> writeAffirmationId(String id) async => _store['aff'] = id;
@@ -42,8 +45,8 @@ void main() {
   test('pickAffirmation avoids last id when possible', () async {
     final loader = FakeLoader({
       'assets/content/affirmations.json': [
-        {'id': 'a1', 'text': 'one', 'tags': ['calm']},
-        {'id': 'a2', 'text': 'two', 'tags': ['calm']},
+        {'id': 'a1', 'text': 'one', 'tags': ['calm'], 'weight': 1},
+        {'id': 'a2', 'text': 'two', 'tags': ['calm'], 'weight': 1},
       ],
     });
     final history = FakeHistoryStore()..writeAffirmationId('a1');
@@ -60,7 +63,7 @@ void main() {
   test('pickMicroTask falls back when only last exists', () async {
     final loader = FakeLoader({
       'assets/content/micro_tasks.json': [
-        {'id': 't1', 'title': 't', 'description': 'd', 'tags': ['x']},
+        {'id': 't1', 'title': 't', 'description': 'd', 'tags': ['x'], 'weight': 1},
       ],
     });
     final history = FakeHistoryStore()..writeMicroTaskId('t1');

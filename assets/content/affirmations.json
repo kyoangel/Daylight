@@ -2,16 +2,19 @@
   {
     "id": "aff_001",
     "text": "You made it through today, and that matters.",
-    "tags": ["calm", "tired"]
+    "tags": ["calm", "tired"],
+    "weight": 2
   },
   {
     "id": "aff_002",
     "text": "Small steps still move you forward.",
-    "tags": ["hope", "low"]
+    "tags": ["hope", "low"],
+    "weight": 3
   },
   {
     "id": "aff_003",
     "text": "You deserve kindness from yourself.",
-    "tags": ["self-kindness"]
+    "tags": ["self-kindness"],
+    "weight": 1
   }
 ]

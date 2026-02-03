@@ -18,10 +18,10 @@ void main() {
   test('ContentRepository loads items via loader', () async {
     final loader = FakeLoader({
       'assets/content/affirmations.json': [
-        {'id': 'a1', 'text': 'hello', 'tags': ['t1']}
+        {'id': 'a1', 'text': 'hello', 'tags': ['t1'], 'weight': 1}
       ],
       'assets/content/micro_tasks.json': [
-        {'id': 't1', 'title': 'title', 'description': 'desc', 'tags': ['x']}
+        {'id': 't1', 'title': 'title', 'description': 'desc', 'tags': ['x'], 'weight': 1}
       ],
       'assets/content/mindfulness_guides.json': [
         {
@@ -29,7 +29,8 @@ void main() {
           'title': 'title',
           'duration': '1 min',
           'steps': ['s1'],
-          'tags': ['y']
+          'tags': ['y'],
+          'weight': 1
         }
       ],
     });

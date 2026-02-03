@@ -66,11 +66,31 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
     return counts;
   }
 
+  String _buildWeeklySummary(Map<String, int> counts) {
+    if (counts.isEmpty) return '';
+    final top = counts.entries.reduce((a, b) => a.value >= b.value ? a : b);
+    return '本週最常出現的心情是「${_labelForMood(top.key)}」（${top.value} 次）。';
+  }
+
+  String _labelForMood(String tag) {
+    switch (tag) {
+      case 'calm':
+        return '平靜';
+      case 'sad':
+        return '低落';
+      case 'anxious':
+        return '焦慮';
+      default:
+        return tag;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = ref.read(diaryViewModelProvider.notifier);
     final entries = ref.watch(diaryViewModelProvider);
     final moodCounts = _buildMoodCounts(entries);
+    final summary = _buildWeeklySummary(moodCounts);
 
     return Scaffold(
       appBar: AppBar(title: const Text('情緒日記')),
@@ -83,6 +103,10 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
             const Text('尚無紀錄')
           else
             MoodBarChart(counts: moodCounts),
+          if (summary.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(summary, style: const TextStyle(color: Colors.black54)),
+          ],
           const SizedBox(height: 16),
           const Text('心情選擇', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),

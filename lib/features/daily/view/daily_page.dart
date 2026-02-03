@@ -84,11 +84,29 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     return trend;
   }
 
+  String _buildWeeklySummary(List<DailyEntry> entries) {
+    if (entries.isEmpty) return '';
+    final today = DateTime.now();
+    final start = DateTime(today.year, today.month, today.day).subtract(const Duration(days: 6));
+    final recent = entries.where((entry) {
+      final day = DateTime(entry.date.year, entry.date.month, entry.date.day);
+      return !day.isBefore(start);
+    }).toList();
+    if (recent.isEmpty) return '';
+    final scores = recent.map((e) => e.moodScore).toList();
+    final avg = scores.reduce((a, b) => a + b) / scores.length;
+    final min = scores.reduce((a, b) => a < b ? a : b);
+    final max = scores.reduce((a, b) => a > b ? a : b);
+    return '本週平均心情 ${avg.toStringAsFixed(1)}，最高 $max，最低 $min。';
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = ref.read(dailyViewModelProvider.notifier);
     final entries = ref.watch(dailyViewModelProvider);
     final trend = _buildWeeklyTrend(entries);
+
+    final summary = _buildWeeklySummary(entries);
 
     return Scaffold(
       appBar: AppBar(title: const Text('日常節奏')),
@@ -104,6 +122,10 @@ class _DailyPageState extends ConsumerState<DailyPage> {
               height: 140,
               child: MoodTrendChart(values: trend),
             ),
+          if (summary.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(summary, style: const TextStyle(color: Colors.black54)),
+          ],
           const SizedBox(height: 16),
           const Text('今日心情', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           Slider(
