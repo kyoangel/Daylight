@@ -65,15 +65,46 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     return ['hope', 'gentle', 'refresh'];
   }
 
+  List<double> _buildWeeklyTrend(List<DailyEntry> entries) {
+    if (entries.isEmpty) return [];
+    final today = DateTime.now();
+    final start = DateTime(today.year, today.month, today.day).subtract(const Duration(days: 6));
+    final byDate = <String, DailyEntry>{};
+    for (final entry in entries) {
+      final key = '${entry.date.year}-${entry.date.month}-${entry.date.day}';
+      byDate[key] = entry;
+    }
+    final trend = <double>[];
+    for (var i = 0; i < 7; i++) {
+      final day = start.add(Duration(days: i));
+      final key = '${day.year}-${day.month}-${day.day}';
+      final value = byDate[key]?.moodScore.toDouble();
+      trend.add(value ?? 0);
+    }
+    return trend;
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = ref.read(dailyViewModelProvider.notifier);
+    final entries = ref.watch(dailyViewModelProvider);
+    final trend = _buildWeeklyTrend(entries);
 
     return Scaffold(
       appBar: AppBar(title: const Text('日常節奏')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const Text('本週心情趨勢', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          if (trend.isEmpty)
+            const Text('尚無紀錄')
+          else
+            SizedBox(
+              height: 140,
+              child: MoodTrendChart(values: trend),
+            ),
+          const SizedBox(height: 16),
           const Text('今日心情', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           Slider(
             value: _moodScore,
@@ -149,5 +180,53 @@ class _DailyPageState extends ConsumerState<DailyPage> {
         ],
       ),
     );
+  }
+}
+
+class MoodTrendChart extends StatelessWidget {
+  const MoodTrendChart({super.key, required this.values});
+
+  final List<double> values;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: _MoodTrendPainter(values: values),
+      child: Container(),
+    );
+  }
+}
+
+class _MoodTrendPainter extends CustomPainter {
+  _MoodTrendPainter({required this.values});
+
+  final List<double> values;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (values.isEmpty) return;
+    final paint = Paint()
+      ..color = Colors.teal
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    final path = Path();
+    final stepX = values.length > 1 ? size.width / (values.length - 1) : size.width;
+    for (var i = 0; i < values.length; i++) {
+      final x = stepX * i;
+      final normalized = (values[i] / 10).clamp(0, 1);
+      final y = size.height - (size.height * normalized);
+      if (i == 0) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+    }
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _MoodTrendPainter oldDelegate) {
+    return oldDelegate.values != values;
   }
 }

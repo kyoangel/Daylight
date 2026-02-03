@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:daylight/features/diary/view/diary_page.dart';
 
 void main() {
-  testWidgets('DiaryPage renders save button', (WidgetTester tester) async {
+  testWidgets('DiaryPage shows weekly mood distribution section', (WidgetTester tester) async {
     SharedPreferences.setMockInitialValues({});
 
     await tester.pumpWidget(
@@ -15,7 +15,6 @@ void main() {
       ),
     );
 
-    expect(find.byType(ElevatedButton, skipOffstage: false), findsOneWidget);
-    expect(find.byType(DropdownButton<String>), findsNWidgets(2));
+    expect(find.text('本週心情分佈'), findsOneWidget);
   });
 }

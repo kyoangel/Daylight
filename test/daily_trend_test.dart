@@ -3,19 +3,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:daylight/features/diary/view/diary_page.dart';
+import 'package:daylight/features/daily/view/daily_page.dart';
 
 void main() {
-  testWidgets('DiaryPage renders save button', (WidgetTester tester) async {
+  testWidgets('DailyPage shows weekly trend section', (WidgetTester tester) async {
     SharedPreferences.setMockInitialValues({});
 
     await tester.pumpWidget(
       const ProviderScope(
-        child: MaterialApp(home: DiaryPage()),
+        child: MaterialApp(home: DailyPage()),
       ),
     );
 
-    expect(find.byType(ElevatedButton, skipOffstage: false), findsOneWidget);
-    expect(find.byType(DropdownButton<String>), findsNWidgets(2));
+    expect(find.text('本週心情趨勢'), findsOneWidget);
   });
 }

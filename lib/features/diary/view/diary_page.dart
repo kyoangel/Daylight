@@ -53,15 +53,37 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
     });
   }
 
+  Map<String, int> _buildMoodCounts(List<DiaryEntry> entries) {
+    if (entries.isEmpty) return {};
+    final today = DateTime.now();
+    final start = DateTime(today.year, today.month, today.day).subtract(const Duration(days: 6));
+    final counts = <String, int>{};
+    for (final entry in entries) {
+      final day = DateTime(entry.date.year, entry.date.month, entry.date.day);
+      if (day.isBefore(start)) continue;
+      counts.update(entry.moodTag, (value) => value + 1, ifAbsent: () => 1);
+    }
+    return counts;
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = ref.read(diaryViewModelProvider.notifier);
+    final entries = ref.watch(diaryViewModelProvider);
+    final moodCounts = _buildMoodCounts(entries);
 
     return Scaffold(
       appBar: AppBar(title: const Text('情緒日記')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const Text('本週心情分佈', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          if (moodCounts.isEmpty)
+            const Text('尚無紀錄')
+          else
+            MoodBarChart(counts: moodCounts),
+          const SizedBox(height: 16),
           const Text('心情選擇', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           DropdownButton<String>(
@@ -153,6 +175,55 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class MoodBarChart extends StatelessWidget {
+  const MoodBarChart({super.key, required this.counts});
+
+  final Map<String, int> counts;
+
+  @override
+  Widget build(BuildContext context) {
+    final maxValue = counts.values.isEmpty ? 1 : counts.values.reduce((a, b) => a > b ? a : b);
+    final entries = counts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    return Column(
+      children: entries.map((entry) {
+        final ratio = entry.value / maxValue;
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            children: [
+              SizedBox(width: 60, child: Text(entry.key)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: Colors.teal.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: FractionallySizedBox(
+                    alignment: Alignment.centerLeft,
+                    widthFactor: ratio.clamp(0.05, 1.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.teal,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(entry.value.toString()),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 }
