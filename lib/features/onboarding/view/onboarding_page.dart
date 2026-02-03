@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodel/onboarding_viewmodel.dart';
+import '../../../common/app_strings.dart';
+import '../../../common/locale_provider.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
   const OnboardingPage({super.key});
@@ -41,53 +43,55 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final vm = ref.read(onboardingViewModelProvider.notifier);
+    final locale = ref.watch(localeProvider);
+    final strings = AppStrings.of(locale);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('歡迎')),
+      appBar: AppBar(title: Text(strings.onboardingWelcome)),
       body: PageView(
         controller: _controller,
         onPageChanged: (index) {
           vm.setStep(index);
         },
         children: [
-          _buildWelcomePage(),
-          _buildBasicPage(),
-          _buildPreferencePage(),
-          _buildSafetyPage(),
+          _buildWelcomePage(strings),
+          _buildBasicPage(strings),
+          _buildPreferencePage(strings),
+          _buildSafetyPage(strings),
         ],
       ),
     );
   }
 
-  Widget _buildWelcomePage() {
+  Widget _buildWelcomePage(AppStrings strings) {
     return _pageShell(
-      title: '一日之光',
-      body: const Text('你不是一個人，我們陪你走一小步'),
-      primaryLabel: '開始',
+      title: strings.appTitle,
+      body: Text(strings.onboardingWelcomeBody),
+      primaryLabel: strings.onboardingStart,
       onPrimary: () async {
         await _controller.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
       },
     );
   }
 
-  Widget _buildBasicPage() {
+  Widget _buildBasicPage(AppStrings strings) {
     return _pageShell(
-      title: '基本設定',
+      title: strings.onboardingBasic,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextField(
             controller: _nicknameController,
-            decoration: const InputDecoration(labelText: '暱稱'),
+            decoration: InputDecoration(labelText: strings.nicknameLabel),
           ),
           const SizedBox(height: 12),
-          const Text('語言'),
+          Text(strings.languageLabel),
           DropdownButton<String>(
             value: _language,
             isExpanded: true,
-            items: const [
-              DropdownMenuItem(value: 'zh-TW', child: Text('繁體中文')),
-              DropdownMenuItem(value: 'en', child: Text('English')),
+            items: [
+              DropdownMenuItem(value: 'zh-TW', child: Text(strings.languageOptionLabel('zh-TW'))),
+              DropdownMenuItem(value: 'en', child: Text(strings.languageOptionLabel('en'))),
             ],
             onChanged: (value) {
               if (value == null) return;
@@ -97,7 +101,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             },
           ),
           const SizedBox(height: 12),
-          const Text('提醒時段（可多選）'),
+          Text(strings.reminderTimesLabel),
           Wrap(
             spacing: 8,
             children: ['08:00', '12:00', '21:00'].map((time) {
@@ -119,31 +123,31 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
           ),
         ],
       ),
-      primaryLabel: '下一步',
+      primaryLabel: strings.onboardingNext,
       onPrimary: () async {
         await _saveProfile();
         await _controller.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
       },
-      secondaryLabel: '上一步',
+      secondaryLabel: strings.onboardingBack,
       onSecondary: () async {
         await _controller.previousPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
       },
     );
   }
 
-  Widget _buildPreferencePage() {
+  Widget _buildPreferencePage(AppStrings strings) {
     return _pageShell(
-      title: '情緒偏好',
+      title: strings.onboardingPreferences,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('互動方式（多選）'),
+          Text(strings.preferredInteractionLabel),
           Wrap(
             spacing: 8,
             children: ['text', 'voice', 'task'].map((mode) {
               final selected = _preferredModes.contains(mode);
               return FilterChip(
-                label: Text(mode),
+                label: Text(strings.preferredModeLabel(mode)),
                 selected: selected,
                 onSelected: (value) {
                   setState(() {
@@ -158,13 +162,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             }).toList(),
           ),
           const SizedBox(height: 12),
-          const Text('觸發源（多選）'),
+          Text(strings.triggersLabel),
           Wrap(
             spacing: 8,
             children: ['lonely', 'stress', 'body'].map((trigger) {
               final selected = _triggers.contains(trigger);
               return FilterChip(
-                label: Text(trigger),
+                label: Text(strings.triggerLabel(trigger)),
                 selected: selected,
                 onSelected: (value) {
                   setState(() {
@@ -179,7 +183,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             }).toList(),
           ),
           const SizedBox(height: 12),
-          const Text('心情基準'),
+          Text(strings.moodBaselineLabel),
           Slider(
             value: _moodBaseline,
             min: 0,
@@ -194,30 +198,30 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
           ),
         ],
       ),
-      primaryLabel: '下一步',
+      primaryLabel: strings.onboardingNext,
       onPrimary: () async {
         await _saveProfile();
         await _controller.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
       },
-      secondaryLabel: '上一步',
+      secondaryLabel: strings.onboardingBack,
       onSecondary: () async {
         await _controller.previousPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
       },
     );
   }
 
-  Widget _buildSafetyPage() {
+  Widget _buildSafetyPage(AppStrings strings) {
     return _pageShell(
-      title: '安全提示',
-      body: const Text('這不是醫療服務，如有緊急狀況請使用 SOS。'),
-      primaryLabel: '進入首頁',
+      title: strings.onboardingSafety,
+      body: Text(strings.safetyHint),
+      primaryLabel: strings.onboardingEnter,
       onPrimary: () async {
         final vm = ref.read(onboardingViewModelProvider.notifier);
         await vm.markCompleted();
         if (!mounted) return;
         Navigator.of(context).pushReplacementNamed('/daily');
       },
-      secondaryLabel: '上一步',
+      secondaryLabel: strings.onboardingBack,
       onSecondary: () async {
         await _controller.previousPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
       },

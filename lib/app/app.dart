@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/theme/theme_provider.dart';
 import '../core/theme/theme_model.dart';
+import '../common/app_strings.dart';
+import '../common/locale_provider.dart';
 import '../features/onboarding/view/onboarding_page.dart';
 import '../features/daily/view/daily_page.dart';
 import '../features/companion/view/companion_page.dart';
@@ -15,8 +17,10 @@ class DaylightApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appTheme = ref.watch(themeNotifierProvider);
+    final locale = ref.watch(localeProvider);
+    final strings = AppStrings.of(locale);
     return MaterialApp(
-      title: '一日之光',
+      title: strings.appTitle,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: appTheme.color,
@@ -59,14 +63,14 @@ class DaylightApp extends ConsumerWidget {
   }
 }
 
-class MainNavigation extends StatefulWidget {
+class MainNavigation extends ConsumerStatefulWidget {
   const MainNavigation({super.key});
 
   @override
-  State<MainNavigation> createState() => _MainNavigationState();
+  ConsumerState<MainNavigation> createState() => _MainNavigationState();
 }
 
-class _MainNavigationState extends State<MainNavigation> {
+class _MainNavigationState extends ConsumerState<MainNavigation> {
   int _currentIndex = 0;
   final List<Widget> _pages = const [
     DailyPage(),
@@ -77,6 +81,8 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = ref.watch(localeProvider);
+    final strings = AppStrings.of(locale);
     return Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -86,13 +92,13 @@ class _MainNavigationState extends State<MainNavigation> {
             _currentIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.wb_sunny), label: '日常'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: '陪伴'),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: '日記'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: '我'),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.wb_sunny), label: strings.navDaily),
+          BottomNavigationBarItem(icon: const Icon(Icons.chat_bubble_outline), label: strings.navCompanion),
+          BottomNavigationBarItem(icon: const Icon(Icons.book), label: strings.navDiary),
+          BottomNavigationBarItem(icon: const Icon(Icons.person), label: strings.navProfile),
         ],
       ),
     );
   }
-} 
+}

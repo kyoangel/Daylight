@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:daylight/features/onboarding/view/onboarding_page.dart';
+import 'package:daylight/common/app_strings.dart';
 
 void main() {
   testWidgets('OnboardingPage shows start button', (WidgetTester tester) async {
@@ -15,6 +16,7 @@ void main() {
       ),
     );
 
-    expect(find.text('開始'), findsOneWidget);
+    final strings = AppStrings.of('zh-TW');
+    expect(find.text(strings.onboardingStart), findsOneWidget);
   });
 }

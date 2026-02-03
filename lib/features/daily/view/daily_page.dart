@@ -7,6 +7,8 @@ import '../../../data/content/models/affirmation.dart';
 import '../../../data/content/models/micro_task.dart';
 import '../../../features/profile/viewmodel/profile_viewmodel.dart';
 import '../../../common/app_locale.dart';
+import '../../../common/app_strings.dart';
+import '../../../common/locale_provider.dart';
 
 class DailyPage extends ConsumerStatefulWidget {
   const DailyPage({super.key});
@@ -95,7 +97,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     return trend;
   }
 
-  String _buildWeeklySummary(List<DailyEntry> entries) {
+  String _buildWeeklySummary(List<DailyEntry> entries, AppStrings strings) {
     if (entries.isEmpty) return '';
     final today = DateTime.now();
     final start = DateTime(today.year, today.month, today.day).subtract(const Duration(days: 6));
@@ -108,7 +110,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     final avg = scores.reduce((a, b) => a + b) / scores.length;
     final min = scores.reduce((a, b) => a < b ? a : b);
     final max = scores.reduce((a, b) => a > b ? a : b);
-    return '本週平均心情 ${avg.toStringAsFixed(1)}，最高 $max，最低 $min。';
+    return strings.weeklySummary(avg, max, min);
   }
 
   @override
@@ -118,6 +120,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     final trend = _buildWeeklyTrend(entries);
     final profile = ref.watch(userProfileViewModelProvider);
     final locale = normalizeLocale(profile.language);
+    final strings = AppStrings.of(ref.watch(localeProvider));
     if (_currentLocale != locale) {
       _currentLocale = locale;
       _contentRepository = ContentRepository(locale: locale);
@@ -128,17 +131,17 @@ class _DailyPageState extends ConsumerState<DailyPage> {
       });
     }
 
-    final summary = _buildWeeklySummary(entries);
+    final summary = _buildWeeklySummary(entries, strings);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('日常節奏')),
+      appBar: AppBar(title: Text(strings.dailyTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text('本週心情趨勢', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(strings.weeklyTrend, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           if (trend.isEmpty)
-            const Text('尚無紀錄')
+            Text(strings.noRecords)
           else
             SizedBox(
               height: 140,
@@ -149,7 +152,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
             Text(summary, style: const TextStyle(color: Colors.black54)),
           ],
           const SizedBox(height: 16),
-          const Text('今日心情', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(strings.todayMood, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           Slider(
             value: _moodScore,
             min: 0,
@@ -164,7 +167,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
             },
           ),
           const SizedBox(height: 12),
-          const Text('今日小任務', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(strings.todayTask, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           if (_loadingContent)
             const LinearProgressIndicator()
@@ -176,9 +179,9 @@ class _DailyPageState extends ConsumerState<DailyPage> {
               ),
             )
           else
-            const Text('尚無任務內容'),
+            Text(strings.noTask),
           const SizedBox(height: 12),
-          const Text('今日肯定語', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(strings.todayAffirmation, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           if (_loadingContent)
             const LinearProgressIndicator()
@@ -190,15 +193,15 @@ class _DailyPageState extends ConsumerState<DailyPage> {
               ),
             )
           else
-            const Text('尚無肯定語'),
+            Text(strings.noAffirmation),
           const SizedBox(height: 12),
-          const Text('晚安反思', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(strings.nightReflection, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           TextField(
             controller: _reflectionController,
             maxLines: 4,
-            decoration: const InputDecoration(
-              hintText: '今天哪一刻你覺得稍微輕鬆？',
+            decoration: InputDecoration(
+              hintText: strings.reflectionHint,
               border: OutlineInputBorder(),
             ),
           ),
@@ -216,10 +219,10 @@ class _DailyPageState extends ConsumerState<DailyPage> {
               await vm.upsertEntry(entry);
               if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('今日已保存')),
+                SnackBar(content: Text(strings.savedToday)),
               );
             },
-            child: const Text('保存今日'),
+            child: Text(strings.saveToday),
           ),
         ],
       ),

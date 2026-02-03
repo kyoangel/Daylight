@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/models/sos_contact.dart';
 import '../../../data/repositories/sos_repository.dart';
+import '../../../common/app_strings.dart';
+import '../../../common/locale_provider.dart';
 
 class SOSPage extends ConsumerStatefulWidget {
   const SOSPage({super.key});
@@ -13,9 +15,7 @@ class SOSPage extends ConsumerStatefulWidget {
 class _SOSPageState extends ConsumerState<SOSPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _messageController = TextEditingController(
-    text: '我現在需要幫助，可以陪我一下嗎？',
-  );
+  final TextEditingController _messageController = TextEditingController();
 
   @override
   void dispose() {
@@ -27,27 +27,31 @@ class _SOSPageState extends ConsumerState<SOSPage> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(ref.watch(localeProvider));
+    if (_messageController.text.isEmpty) {
+      _messageController.text = strings.sosDefaultMessage;
+    }
     return Scaffold(
-      appBar: AppBar(title: const Text('SOS 求助')),
+      appBar: AppBar(title: Text(strings.sosTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text('求助聯絡人', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(strings.sosContact, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           TextField(
             controller: _nameController,
-            decoration: const InputDecoration(labelText: '姓名'),
+            decoration: InputDecoration(labelText: strings.sosName),
           ),
           const SizedBox(height: 8),
           TextField(
             controller: _phoneController,
-            decoration: const InputDecoration(labelText: '電話'),
+            decoration: InputDecoration(labelText: strings.sosPhone),
           ),
           const SizedBox(height: 8),
           TextField(
             controller: _messageController,
             maxLines: 3,
-            decoration: const InputDecoration(labelText: '求助訊息'),
+            decoration: InputDecoration(labelText: strings.sosMessage),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
@@ -61,21 +65,21 @@ class _SOSPageState extends ConsumerState<SOSPage> {
               await repo.saveAll([contact]);
               if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('已保存聯絡人')),
+                SnackBar(content: Text(strings.contactSaved)),
               );
             },
-            child: const Text('保存聯絡人'),
+            child: Text(strings.saveContact),
           ),
           const SizedBox(height: 24),
-          const Text('我需要幫助', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(strings.needHelp, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           ElevatedButton(
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('已送出求助訊息（示意）')),
+                SnackBar(content: Text(strings.helpSent)),
               );
             },
-            child: const Text('一鍵求助'),
+            child: Text(strings.sendHelp),
           ),
         ],
       ),

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:daylight/features/sos/view/sos_page.dart';
+import 'package:daylight/common/app_strings.dart';
 
 void main() {
   testWidgets('SOSPage renders contact form', (WidgetTester tester) async {
@@ -15,7 +16,8 @@ void main() {
       ),
     );
 
-    expect(find.text('保存聯絡人'), findsOneWidget);
-    expect(find.text('一鍵求助'), findsOneWidget);
+    final strings = AppStrings.of('zh-TW');
+    expect(find.text(strings.saveContact), findsOneWidget);
+    expect(find.text(strings.sendHelp), findsOneWidget);
   });
 }

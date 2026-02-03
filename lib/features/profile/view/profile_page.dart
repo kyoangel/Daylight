@@ -9,6 +9,8 @@ import 'package:image/image.dart' as img;
 import '../../../core/theme/theme_provider.dart';
 import '../../../core/theme/theme_model.dart';
 import '../../../common/avatar_image.dart';
+import '../../../common/app_strings.dart';
+import '../../../common/locale_provider.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -19,12 +21,14 @@ class ProfilePage extends ConsumerWidget {
     final vm = ref.read(userProfileViewModelProvider.notifier);
     final themeNotifier = ref.read(themeNotifierProvider.notifier);
     final appTheme = ref.watch(themeNotifierProvider);
+    final locale = ref.watch(localeProvider);
+    final strings = AppStrings.of(locale);
     final TextEditingController nicknameController = TextEditingController(text: profile.nickname);
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('個人', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28)),
+        title: Text(strings.profileTitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 28)),
         backgroundColor: appTheme.color,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -46,6 +50,7 @@ class ProfilePage extends ConsumerWidget {
                   vm: vm,
                   theme: appTheme,
                   original: bytes,
+                  strings: strings,
                 );
               },
               child: CircleAvatar(
@@ -65,7 +70,7 @@ class ProfilePage extends ConsumerWidget {
                   child: TextField(
                     controller: nicknameController,
                     decoration: InputDecoration(
-                      labelText: '暱稱',
+                      labelText: strings.nicknameLabel,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
                       filled: true,
                       fillColor: appTheme.color.withOpacity(0.08),
@@ -82,7 +87,7 @@ class ProfilePage extends ConsumerWidget {
                     vm.updateNickname(nicknameController.text);
                     FocusScope.of(context).unfocus();
                   },
-                  child: const Text('儲存', style: TextStyle(color: Colors.white)),
+                  child: Text(strings.save, style: const TextStyle(color: Colors.white)),
                 ),
               ],
             ),
@@ -90,7 +95,7 @@ class ProfilePage extends ConsumerWidget {
             // 主題色切換
             Align(
               alignment: Alignment.centerLeft,
-              child: Text('主題色', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              child: Text(strings.themeColor, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             ),
             const SizedBox(height: 12),
             Row(
@@ -130,6 +135,7 @@ class ProfilePage extends ConsumerWidget {
     required UserProfileViewModel vm,
     required AppTheme theme,
     required Uint8List original,
+    required AppStrings strings,
   }) async {
     final controller = CropController();
     Uint8List current = original;
@@ -166,7 +172,7 @@ class ProfilePage extends ConsumerWidget {
             }
 
             return AlertDialog(
-              title: const Text('裁切照片'),
+              title: Text(strings.cropPhotoTitle),
               content: SizedBox(
                 width: 360,
                 child: Column(
@@ -228,12 +234,12 @@ class ProfilePage extends ConsumerWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: const Text('取消'),
+                  child: Text(strings.cropCancel),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: theme.color),
                   onPressed: () => controller.cropCircle(),
-                  child: const Text('裁切', style: TextStyle(color: Colors.white)),
+                  child: Text(strings.cropApply, style: const TextStyle(color: Colors.white)),
                 ),
               ],
             );

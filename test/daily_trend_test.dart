@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:daylight/features/daily/view/daily_page.dart';
+import 'package:daylight/common/app_strings.dart';
 
 void main() {
   testWidgets('DailyPage shows weekly trend section', (WidgetTester tester) async {
@@ -15,6 +16,7 @@ void main() {
       ),
     );
 
-    expect(find.text('本週心情趨勢'), findsOneWidget);
+    final strings = AppStrings.of('zh-TW');
+    expect(find.text(strings.weeklyTrend), findsOneWidget);
   });
 }

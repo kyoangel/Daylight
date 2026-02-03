@@ -6,6 +6,8 @@ import '../../../data/content/content_repository.dart';
 import '../../../data/content/models/mindfulness_guide.dart';
 import '../../../features/profile/viewmodel/profile_viewmodel.dart';
 import '../../../common/app_locale.dart';
+import '../../../common/app_strings.dart';
+import '../../../common/locale_provider.dart';
 
 class DiaryPage extends ConsumerStatefulWidget {
   const DiaryPage({super.key});
@@ -69,23 +71,10 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
     return counts;
   }
 
-  String _buildWeeklySummary(Map<String, int> counts) {
+  String _buildWeeklySummary(Map<String, int> counts, AppStrings strings) {
     if (counts.isEmpty) return '';
     final top = counts.entries.reduce((a, b) => a.value >= b.value ? a : b);
-    return '本週最常出現的心情是「${_labelForMood(top.key)}」（${top.value} 次）。';
-  }
-
-  String _labelForMood(String tag) {
-    switch (tag) {
-      case 'calm':
-        return '平靜';
-      case 'sad':
-        return '低落';
-      case 'anxious':
-        return '焦慮';
-      default:
-        return tag;
-    }
+    return strings.weeklyMoodSummary(strings.moodLabel(top.key), top.value);
   }
 
   @override
@@ -93,40 +82,41 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
     final vm = ref.read(diaryViewModelProvider.notifier);
     final entries = ref.watch(diaryViewModelProvider);
     final moodCounts = _buildMoodCounts(entries);
-    final summary = _buildWeeklySummary(moodCounts);
     final profile = ref.watch(userProfileViewModelProvider);
     final locale = normalizeLocale(profile.language);
+    final strings = AppStrings.of(ref.watch(localeProvider));
     if (_currentLocale != locale) {
       _currentLocale = locale;
       _contentRepository = ContentRepository(locale: locale);
       _loadGuide();
     }
+    final summary = _buildWeeklySummary(moodCounts, strings);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('情緒日記')),
+      appBar: AppBar(title: Text(strings.diaryTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text('本週心情分佈', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(strings.weeklyDistribution, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           if (moodCounts.isEmpty)
-            const Text('尚無紀錄')
+            Text(strings.noRecords)
           else
-            MoodBarChart(counts: moodCounts),
+            MoodBarChart(counts: moodCounts, labelForMood: strings.moodLabel),
           if (summary.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(summary, style: const TextStyle(color: Colors.black54)),
           ],
           const SizedBox(height: 16),
-          const Text('心情選擇', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(strings.moodSelect, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           DropdownButton<String>(
             value: _moodTag,
             isExpanded: true,
-            items: const [
-              DropdownMenuItem(value: 'calm', child: Text('平靜')),
-              DropdownMenuItem(value: 'sad', child: Text('低落')),
-              DropdownMenuItem(value: 'anxious', child: Text('焦慮')),
+            items: [
+              DropdownMenuItem(value: 'calm', child: Text(strings.moodLabel('calm'))),
+              DropdownMenuItem(value: 'sad', child: Text(strings.moodLabel('sad'))),
+              DropdownMenuItem(value: 'anxious', child: Text(strings.moodLabel('anxious'))),
             ],
             onChanged: (value) {
               if (value == null) return;
@@ -137,15 +127,15 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
             },
           ),
           const SizedBox(height: 12),
-          const Text('日記模板', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(strings.diaryTemplate, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           DropdownButton<String>(
             value: _template,
             isExpanded: true,
-            items: const [
-              DropdownMenuItem(value: 'gratitude', child: Text('感謝')),
-              DropdownMenuItem(value: 'release', child: Text('放下')),
-              DropdownMenuItem(value: 'hope', child: Text('希望')),
+            items: [
+              DropdownMenuItem(value: 'gratitude', child: Text(strings.templateLabel('gratitude'))),
+              DropdownMenuItem(value: 'release', child: Text(strings.templateLabel('release'))),
+              DropdownMenuItem(value: 'hope', child: Text(strings.templateLabel('hope'))),
             ],
             onChanged: (value) {
               if (value == null) return;
@@ -155,7 +145,7 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
             },
           ),
           const SizedBox(height: 12),
-          const Text('正念引導', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(strings.mindfulness, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           if (_loadingGuide)
             const LinearProgressIndicator()
@@ -168,7 +158,7 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
                   children: [
                     Text(_guide!.title, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 6),
-                    Text('時長：${_guide!.duration}'),
+                    Text(strings.mindfulnessDuration(_guide!.duration)),
                     const SizedBox(height: 6),
                     ..._guide!.steps.map((step) => Text('- $step')),
                   ],
@@ -176,15 +166,15 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
               ),
             )
           else
-            const Text('尚無引導內容'),
+            Text(strings.noGuide),
           const SizedBox(height: 12),
-          const Text('日記內容', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(strings.diaryContent, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           TextField(
             controller: _contentController,
             maxLines: 6,
-            decoration: const InputDecoration(
-              hintText: '你願意寫下現在的感覺嗎？',
+            decoration: InputDecoration(
+              hintText: strings.diaryHint,
               border: OutlineInputBorder(),
             ),
           ),
@@ -202,10 +192,10 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
               await vm.addEntry(entry);
               if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('日記已保存')),
+                SnackBar(content: Text(strings.diarySaved)),
               );
             },
-            child: const Text('保存日記'),
+            child: Text(strings.saveDiary),
           ),
         ],
       ),
@@ -214,9 +204,10 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
 }
 
 class MoodBarChart extends StatelessWidget {
-  const MoodBarChart({super.key, required this.counts});
+  const MoodBarChart({super.key, required this.counts, required this.labelForMood});
 
   final Map<String, int> counts;
+  final String Function(String) labelForMood;
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +222,7 @@ class MoodBarChart extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Row(
             children: [
-              SizedBox(width: 60, child: Text(entry.key)),
+              SizedBox(width: 60, child: Text(labelForMood(entry.key))),
               const SizedBox(width: 8),
               Expanded(
                 child: Container(

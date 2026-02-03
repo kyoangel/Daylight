@@ -6,6 +6,8 @@ import '../../../data/content/content_repository.dart';
 import '../../../data/content/models/affirmation.dart';
 import '../../../features/profile/viewmodel/profile_viewmodel.dart';
 import '../../../common/app_locale.dart';
+import '../../../common/app_strings.dart';
+import '../../../common/locale_provider.dart';
 
 class CompanionPage extends ConsumerStatefulWidget {
   const CompanionPage({super.key});
@@ -47,6 +49,7 @@ class _CompanionPageState extends ConsumerState<CompanionPage> {
   Widget build(BuildContext context) {
     final profile = ref.watch(userProfileViewModelProvider);
     final locale = normalizeLocale(profile.language);
+    final strings = AppStrings.of(ref.watch(localeProvider));
     if (_currentLocale != locale) {
       _currentLocale = locale;
       _contentRepository = ContentRepository(locale: locale);
@@ -54,7 +57,7 @@ class _CompanionPageState extends ConsumerState<CompanionPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('陪伴助手')),
+      appBar: AppBar(title: Text(strings.companionTitle)),
       body: Column(
         children: [
           Padding(
@@ -68,17 +71,17 @@ class _CompanionPageState extends ConsumerState<CompanionPage> {
                           child: Text(_affirmation!.text),
                         ),
                       )
-                    : const Text('尚無肯定語'),
+                    : Text(strings.noAffirmation),
           ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: DropdownButton<String>(
               value: _selectedMode,
               isExpanded: true,
-              items: const [
-                DropdownMenuItem(value: 'listen', child: Text('我想被傾聽')),
-                DropdownMenuItem(value: 'calm', child: Text('我想安靜整理一下')),
-                DropdownMenuItem(value: 'companion', child: Text('陪伴 10 分鐘')),
+              items: [
+                DropdownMenuItem(value: 'listen', child: Text(strings.companionModeLabel('listen'))),
+                DropdownMenuItem(value: 'calm', child: Text(strings.companionModeLabel('calm'))),
+                DropdownMenuItem(value: 'companion', child: Text(strings.companionModeLabel('companion'))),
               ],
               onChanged: (value) {
                 if (value == null) return;
@@ -96,7 +99,7 @@ class _CompanionPageState extends ConsumerState<CompanionPage> {
                 Expanded(
                   child: TextField(
                     controller: _inputController,
-                    decoration: const InputDecoration(hintText: '輸入你的心情...'),
+                    decoration: InputDecoration(hintText: strings.companionInputHint),
                   ),
                 ),
                 IconButton(
@@ -117,7 +120,7 @@ class _CompanionPageState extends ConsumerState<CompanionPage> {
                     if (!mounted) return;
                     _inputController.clear();
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('已記錄陪伴')),
+                      SnackBar(content: Text(strings.companionSaved)),
                     );
                   },
                 ),
