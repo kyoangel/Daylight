@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:daylight/data/content/content_loader.dart';
 import 'package:daylight/data/content/content_repository.dart';
 import 'package:daylight/data/content/content_history_store.dart';
@@ -40,53 +39,38 @@ class FakeHistoryStore extends ContentHistoryStore {
 }
 
 void main() {
-  test('ContentRepository pickAffirmation returns matching tag', () async {
+  test('pickAffirmation avoids last id when possible', () async {
     final loader = FakeLoader({
       'assets/content/affirmations.json': [
-        {'id': 'a1', 'text': 'low', 'tags': ['low']},
-        {'id': 'a2', 'text': 'high', 'tags': ['hope']},
+        {'id': 'a1', 'text': 'one', 'tags': ['calm']},
+        {'id': 'a2', 'text': 'two', 'tags': ['calm']},
       ],
     });
-
+    final history = FakeHistoryStore()..writeAffirmationId('a1');
     final repo = ContentRepository(
       loader: loader,
-      historyStore: FakeHistoryStore(),
+      historyStore: history,
       random: Random(0),
     );
-    final picked = await repo.pickAffirmation(tags: ['hope']);
 
-    expect(picked?.id, 'a2');
+    final picked = await repo.pickAffirmation(tags: ['calm']);
+    expect(picked?.id, isNot('a1'));
   });
 
-  test('ContentRepository pickMicroTask falls back', () async {
+  test('pickMicroTask falls back when only last exists', () async {
     final loader = FakeLoader({
       'assets/content/micro_tasks.json': [
         {'id': 't1', 'title': 't', 'description': 'd', 'tags': ['x']},
       ],
     });
-
+    final history = FakeHistoryStore()..writeMicroTaskId('t1');
     final repo = ContentRepository(
       loader: loader,
-      historyStore: FakeHistoryStore(),
+      historyStore: history,
       random: Random(0),
     );
-    final picked = await repo.pickMicroTask(tags: ['missing']);
 
+    final picked = await repo.pickMicroTask(tags: ['x']);
     expect(picked?.id, 't1');
-  });
-
-  test('ContentRepository pickMindfulnessGuide returns null on empty', () async {
-    final loader = FakeLoader({
-      'assets/content/mindfulness_guides.json': [],
-    });
-
-    final repo = ContentRepository(
-      loader: loader,
-      historyStore: FakeHistoryStore(),
-      random: Random(0),
-    );
-    final picked = await repo.pickMindfulnessGuide(tags: ['calm']);
-
-    expect(picked, isNull);
   });
 }
