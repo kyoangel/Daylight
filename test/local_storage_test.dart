@@ -28,4 +28,14 @@ void main() {
     expect(result[0]['a'], 1);
     expect(result[1]['a'], 2);
   });
+
+  test('LocalStorage writes and reads int', () async {
+    SharedPreferences.setMockInitialValues({});
+    final storage = LocalStorage();
+
+    await storage.writeInt('version', 3);
+    final result = await storage.readInt('version');
+
+    expect(result, 3);
+  });
 }

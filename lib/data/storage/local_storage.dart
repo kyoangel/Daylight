@@ -27,4 +27,14 @@ class LocalStorage {
     final decoded = jsonDecode(raw) as List<dynamic>;
     return decoded.cast<Map<String, dynamic>>();
   }
+
+  Future<void> writeInt(String key, int value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(key, value);
+  }
+
+  Future<int?> readInt(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(key);
+  }
 }
