@@ -1,0 +1,26 @@
+[
+  {
+    "id": "mind_001",
+    "title": "One minute breathing",
+    "duration": "1 min",
+    "steps": [
+      "Sit comfortably and soften your shoulders.",
+      "Inhale for four counts, exhale for four counts.",
+      "Repeat for a few cycles and notice your breath."
+    ],
+    "tags": ["breathing", "calm"]
+  },
+  {
+    "id": "mind_002",
+    "title": "Grounding with senses",
+    "duration": "3 min",
+    "steps": [
+      "Name 5 things you can see.",
+      "Name 4 things you can feel.",
+      "Name 3 things you can hear.",
+      "Name 2 things you can smell.",
+      "Name 1 thing you can taste."
+    ],
+    "tags": ["grounding"]
+  }
+]
