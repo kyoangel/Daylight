@@ -1,16 +1,14 @@
-# daylight
+# Daylight 一日之光
 
-A new Flutter project.
+Daylight 是一款提供情緒支持的自助式療癒工具，目標是陪伴較憂鬱、需要正向心態的人，特別是長期在家獨處的身心障礙者。支援 Web / Android / iOS。
 
-## Getting Started
+## 主要應用場景
+- 每日情緒打卡與小任務，建立穩定生活節奏
+- 情緒日記與週回顧，幫助梳理感受與成長軌跡
+- 陪伴式支持與正念引導，提供溫柔的心理支持
+- SOS 求助入口，低門檻取得緊急協助
 
-This project is a starting point for a Flutter application.
+## 開發規則
+- 單元測試為必需：每次迭代需先新增/更新測試並通過後才能繼續開發
+- 詳細規則請見 `docs/dev_rules.md`
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
