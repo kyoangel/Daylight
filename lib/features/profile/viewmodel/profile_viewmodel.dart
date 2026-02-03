@@ -1,44 +1,37 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../model/user_profile.dart';
-import '../service/user_profile_service.dart';
+import '../../../data/models/user_profile_model.dart';
+import '../../../data/repositories/user_profile_repository.dart';
 
-class UserProfileViewModel extends StateNotifier<UserProfile> {
-  final UserProfileService _service = UserProfileService();
-
-  UserProfileViewModel()
-      : super(UserProfile(
-          nickname: '',
-          reminderTime: DateTime.now(),
-          sosContact: '',
-          avatarUrl: null,
-          themeColorHex: '#75C9E0',
-        )) {
+class UserProfileViewModel extends StateNotifier<UserProfileModel> {
+  UserProfileViewModel({UserProfileRepository? repository})
+      : _repository = repository ?? UserProfileRepository(),
+        super(UserProfileModel.initial()) {
     _loadProfile();
   }
 
+  final UserProfileRepository _repository;
+
   Future<void> _loadProfile() async {
-    final loaded = await _service.loadProfile();
-    if (loaded != null) {
-      state = loaded;
-    }
+    final loaded = await _repository.load();
+    state = loaded;
   }
 
   Future<void> updateNickname(String nickname) async {
     state = state.copyWith(nickname: nickname);
-    await _service.saveProfile(state);
+    await _repository.save(state);
   }
 
   Future<void> updateAvatar(String? avatarUrl) async {
     state = state.copyWith(avatarUrl: avatarUrl);
-    await _service.saveProfile(state);
+    await _repository.save(state);
   }
 
   Future<void> updateThemeColor(String hex) async {
     state = state.copyWith(themeColorHex: hex);
-    await _service.saveProfile(state);
+    await _repository.save(state);
   }
 }
 
-final userProfileViewModelProvider = StateNotifierProvider<UserProfileViewModel, UserProfile>(
+final userProfileViewModelProvider = StateNotifierProvider<UserProfileViewModel, UserProfileModel>(
   (ref) => UserProfileViewModel(),
-); 
+);
