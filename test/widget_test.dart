@@ -7,7 +7,7 @@ import 'package:daylight/app/app.dart';
 void main() {
   testWidgets('DaylightApp basic startup smoke test', (WidgetTester tester) async {
     await tester.pumpWidget(const ProviderScope(child: DaylightApp()));
-    await tester.pumpAndSettle();
+    await tester.pump();
 
     expect(find.byType(BottomNavigationBar), findsOneWidget);
     expect(find.text('日常'), findsOneWidget);

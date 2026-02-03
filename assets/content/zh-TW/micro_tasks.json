@@ -1,0 +1,23 @@
+[
+  {
+    "id": "task_001",
+    "title": "喝一點水",
+    "description": "慢慢喝幾口水，感受一下身體的回應。",
+    "tags": ["body", "reset"],
+    "weight": 2
+  },
+  {
+    "id": "task_002",
+    "title": "打開窗戶",
+    "description": "讓空氣流動一分鐘，感受一點清新。",
+    "tags": ["refresh", "calm"],
+    "weight": 2
+  },
+  {
+    "id": "task_003",
+    "title": "輕輕伸展",
+    "description": "轉轉肩膀，慢慢深呼吸一次。",
+    "tags": ["body", "gentle"],
+    "weight": 1
+  }
+]

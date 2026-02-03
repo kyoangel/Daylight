@@ -17,13 +17,13 @@ class FakeLoader implements ContentLoader {
 void main() {
   test('ContentRepository loads items via loader', () async {
     final loader = FakeLoader({
-      'assets/content/affirmations.json': [
+      'assets/content/zh-TW/affirmations.json': [
         {'id': 'a1', 'text': 'hello', 'tags': ['t1'], 'weight': 1}
       ],
-      'assets/content/micro_tasks.json': [
+      'assets/content/zh-TW/micro_tasks.json': [
         {'id': 't1', 'title': 'title', 'description': 'desc', 'tags': ['x'], 'weight': 1}
       ],
-      'assets/content/mindfulness_guides.json': [
+      'assets/content/zh-TW/mindfulness_guides.json': [
         {
           'id': 'm1',
           'title': 'title',

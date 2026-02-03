@@ -5,6 +5,8 @@ import '../../../data/models/daily_entry.dart';
 import '../../../data/content/content_repository.dart';
 import '../../../data/content/models/affirmation.dart';
 import '../../../data/content/models/micro_task.dart';
+import '../../../features/profile/viewmodel/profile_viewmodel.dart';
+import '../../../common/app_locale.dart';
 
 class DailyPage extends ConsumerStatefulWidget {
   const DailyPage({super.key});
@@ -16,10 +18,21 @@ class DailyPage extends ConsumerStatefulWidget {
 class _DailyPageState extends ConsumerState<DailyPage> {
   double _moodScore = 5;
   final TextEditingController _reflectionController = TextEditingController();
-  final ContentRepository _contentRepository = ContentRepository();
+  ContentRepository _contentRepository = ContentRepository(locale: 'zh-TW');
+  String _currentLocale = 'zh-TW';
   Affirmation? _affirmation;
   MicroTask? _microTask;
   bool _loadingContent = true;
+  bool _pendingReload = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final profile = ref.read(userProfileViewModelProvider);
+    _currentLocale = normalizeLocale(profile.language);
+    _contentRepository = ContentRepository(locale: _currentLocale);
+    _loadContent();
+  }
 
   @override
   void dispose() {
@@ -27,13 +40,10 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadContent();
-  }
-
   Future<void> _loadContent() async {
+    setState(() {
+      _loadingContent = true;
+    });
     final affirmations = await _contentRepository.loadAffirmations();
     final tasks = await _contentRepository.loadMicroTasks();
     if (!mounted) return;
@@ -41,6 +51,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
       _affirmation = affirmations.isNotEmpty ? affirmations.first : null;
       _microTask = tasks.isNotEmpty ? tasks.first : null;
       _loadingContent = false;
+      _pendingReload = false;
     });
   }
 
@@ -105,6 +116,17 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     final vm = ref.read(dailyViewModelProvider.notifier);
     final entries = ref.watch(dailyViewModelProvider);
     final trend = _buildWeeklyTrend(entries);
+    final profile = ref.watch(userProfileViewModelProvider);
+    final locale = normalizeLocale(profile.language);
+    if (_currentLocale != locale) {
+      _currentLocale = locale;
+      _contentRepository = ContentRepository(locale: locale);
+      _pendingReload = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !_pendingReload) return;
+        _loadContent();
+      });
+    }
 
     final summary = _buildWeeklySummary(entries);
 

@@ -4,32 +4,36 @@ import 'models/micro_task.dart';
 import 'models/mindfulness_guide.dart';
 import 'content_loader.dart';
 import 'content_history_store.dart';
+import 'content_paths.dart';
 
 class ContentRepository {
   ContentRepository({
     ContentLoader? loader,
     ContentHistoryStore? historyStore,
     Random? random,
+    String? locale,
   })  : _loader = loader ?? const AssetContentLoader(),
         _historyStore = historyStore ?? ContentHistoryStore(),
-        _random = random ?? Random();
+        _random = random ?? Random(),
+        _locale = locale ?? 'zh-TW';
 
   final ContentLoader _loader;
   final ContentHistoryStore _historyStore;
   final Random _random;
+  final String _locale;
 
   Future<List<Affirmation>> loadAffirmations() async {
-    final items = await _loader.loadList('assets/content/affirmations.json');
+    final items = await _loader.loadList(ContentPaths.affirmations(_locale));
     return items.map(Affirmation.fromJson).toList();
   }
 
   Future<List<MicroTask>> loadMicroTasks() async {
-    final items = await _loader.loadList('assets/content/micro_tasks.json');
+    final items = await _loader.loadList(ContentPaths.microTasks(_locale));
     return items.map(MicroTask.fromJson).toList();
   }
 
   Future<List<MindfulnessGuide>> loadMindfulnessGuides() async {
-    final items = await _loader.loadList('assets/content/mindfulness_guides.json');
+    final items = await _loader.loadList(ContentPaths.mindfulnessGuides(_locale));
     return items.map(MindfulnessGuide.fromJson).toList();
   }
 

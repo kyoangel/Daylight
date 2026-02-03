@@ -44,7 +44,7 @@ class FakeHistoryStore extends ContentHistoryStore {
 void main() {
   test('pickAffirmation avoids last id when possible', () async {
     final loader = FakeLoader({
-      'assets/content/affirmations.json': [
+      'assets/content/zh-TW/affirmations.json': [
         {'id': 'a1', 'text': 'one', 'tags': ['calm'], 'weight': 1},
         {'id': 'a2', 'text': 'two', 'tags': ['calm'], 'weight': 1},
       ],
@@ -62,7 +62,7 @@ void main() {
 
   test('pickMicroTask falls back when only last exists', () async {
     final loader = FakeLoader({
-      'assets/content/micro_tasks.json': [
+      'assets/content/zh-TW/micro_tasks.json': [
         {'id': 't1', 'title': 't', 'description': 'd', 'tags': ['x'], 'weight': 1},
       ],
     });

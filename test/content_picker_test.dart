@@ -45,7 +45,7 @@ class FakeHistoryStore extends ContentHistoryStore {
 void main() {
   test('ContentRepository pickAffirmation returns matching tag', () async {
     final loader = FakeLoader({
-      'assets/content/affirmations.json': [
+      'assets/content/zh-TW/affirmations.json': [
         {'id': 'a1', 'text': 'low', 'tags': ['low'], 'weight': 1},
         {'id': 'a2', 'text': 'high', 'tags': ['hope'], 'weight': 1},
       ],
@@ -63,7 +63,7 @@ void main() {
 
   test('ContentRepository pickMicroTask falls back', () async {
     final loader = FakeLoader({
-      'assets/content/micro_tasks.json': [
+      'assets/content/zh-TW/micro_tasks.json': [
         {'id': 't1', 'title': 't', 'description': 'd', 'tags': ['x'], 'weight': 1},
       ],
     });
@@ -80,7 +80,7 @@ void main() {
 
   test('ContentRepository pickMindfulnessGuide returns null on empty', () async {
     final loader = FakeLoader({
-      'assets/content/mindfulness_guides.json': [],
+      'assets/content/zh-TW/mindfulness_guides.json': [],
     });
 
     final repo = ContentRepository(

@@ -4,6 +4,8 @@ import '../../../data/models/companion_session.dart';
 import '../../../data/repositories/companion_repository.dart';
 import '../../../data/content/content_repository.dart';
 import '../../../data/content/models/affirmation.dart';
+import '../../../features/profile/viewmodel/profile_viewmodel.dart';
+import '../../../common/app_locale.dart';
 
 class CompanionPage extends ConsumerStatefulWidget {
   const CompanionPage({super.key});
@@ -15,7 +17,8 @@ class CompanionPage extends ConsumerStatefulWidget {
 class _CompanionPageState extends ConsumerState<CompanionPage> {
   final TextEditingController _inputController = TextEditingController();
   String _selectedMode = 'listen';
-  final ContentRepository _contentRepository = ContentRepository();
+  ContentRepository _contentRepository = ContentRepository(locale: 'zh-TW');
+  String _currentLocale = 'zh-TW';
   Affirmation? _affirmation;
   bool _loadingAffirmation = true;
 
@@ -42,6 +45,14 @@ class _CompanionPageState extends ConsumerState<CompanionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final profile = ref.watch(userProfileViewModelProvider);
+    final locale = normalizeLocale(profile.language);
+    if (_currentLocale != locale) {
+      _currentLocale = locale;
+      _contentRepository = ContentRepository(locale: locale);
+      _loadAffirmation();
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('陪伴助手')),
       body: Column(

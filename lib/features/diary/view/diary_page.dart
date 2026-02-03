@@ -4,6 +4,8 @@ import '../viewmodel/diary_viewmodel.dart';
 import '../../../data/models/diary_entry.dart';
 import '../../../data/content/content_repository.dart';
 import '../../../data/content/models/mindfulness_guide.dart';
+import '../../../features/profile/viewmodel/profile_viewmodel.dart';
+import '../../../common/app_locale.dart';
 
 class DiaryPage extends ConsumerStatefulWidget {
   const DiaryPage({super.key});
@@ -16,7 +18,8 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
   final TextEditingController _contentController = TextEditingController();
   String _moodTag = 'calm';
   String _template = 'gratitude';
-  final ContentRepository _contentRepository = ContentRepository();
+  ContentRepository _contentRepository = ContentRepository(locale: 'zh-TW');
+  String _currentLocale = 'zh-TW';
   MindfulnessGuide? _guide;
   bool _loadingGuide = true;
 
@@ -91,6 +94,13 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
     final entries = ref.watch(diaryViewModelProvider);
     final moodCounts = _buildMoodCounts(entries);
     final summary = _buildWeeklySummary(moodCounts);
+    final profile = ref.watch(userProfileViewModelProvider);
+    final locale = normalizeLocale(profile.language);
+    if (_currentLocale != locale) {
+      _currentLocale = locale;
+      _contentRepository = ContentRepository(locale: locale);
+      _loadGuide();
+    }
 
     return Scaffold(
       appBar: AppBar(title: const Text('情緒日記')),

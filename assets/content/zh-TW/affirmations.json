@@ -1,0 +1,20 @@
+[
+  {
+    "id": "aff_001",
+    "text": "你今天走到這裡已經很不容易。",
+    "tags": ["calm", "tired"],
+    "weight": 2
+  },
+  {
+    "id": "aff_002",
+    "text": "小小的一步也在向前。",
+    "tags": ["hope", "low"],
+    "weight": 3
+  },
+  {
+    "id": "aff_003",
+    "text": "你值得對自己溫柔一點。",
+    "tags": ["self-kindness"],
+    "weight": 1
+  }
+]
