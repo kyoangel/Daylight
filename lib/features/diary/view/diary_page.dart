@@ -41,6 +41,18 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
     });
   }
 
+  Future<void> _refreshGuideByMood() async {
+    setState(() {
+      _loadingGuide = true;
+    });
+    final picked = await _contentRepository.pickMindfulnessGuide(tags: [_moodTag]);
+    if (!mounted) return;
+    setState(() {
+      _guide = picked;
+      _loadingGuide = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = ref.read(diaryViewModelProvider.notifier);
@@ -65,6 +77,7 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
               setState(() {
                 _moodTag = value;
               });
+              _refreshGuideByMood();
             },
           ),
           const SizedBox(height: 12),

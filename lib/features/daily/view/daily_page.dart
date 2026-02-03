@@ -44,6 +44,27 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     });
   }
 
+  Future<void> _refreshContentByMood() async {
+    setState(() {
+      _loadingContent = true;
+    });
+    final tags = _tagsForMood(_moodScore.round());
+    final pickedAffirmation = await _contentRepository.pickAffirmation(tags: tags);
+    final pickedTask = await _contentRepository.pickMicroTask(tags: tags);
+    if (!mounted) return;
+    setState(() {
+      _affirmation = pickedAffirmation;
+      _microTask = pickedTask;
+      _loadingContent = false;
+    });
+  }
+
+  List<String> _tagsForMood(int mood) {
+    if (mood <= 3) return ['low', 'calm', 'self-kindness'];
+    if (mood <= 6) return ['calm', 'reset'];
+    return ['hope', 'gentle', 'refresh'];
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = ref.read(dailyViewModelProvider.notifier);
@@ -64,6 +85,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
               setState(() {
                 _moodScore = value;
               });
+              _refreshContentByMood();
             },
           ),
           const SizedBox(height: 12),
