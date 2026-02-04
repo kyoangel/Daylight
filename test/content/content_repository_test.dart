@@ -33,6 +33,9 @@ void main() {
           'weight': 1
         }
       ],
+      'assets/content/zh-TW/welcome_messages.json': [
+        {'id': 'w1', 'greeting': 'hi', 'direction': 'step', 'tags': ['z'], 'weight': 1}
+      ],
     });
 
     final repo = ContentRepository(loader: loader);
@@ -40,9 +43,11 @@ void main() {
     final affirmations = await repo.loadAffirmations();
     final tasks = await repo.loadMicroTasks();
     final guides = await repo.loadMindfulnessGuides();
+    final welcomes = await repo.loadWelcomeMessages();
 
     expect(affirmations.first.id, 'a1');
     expect(tasks.first.id, 't1');
     expect(guides.first.id, 'm1');
+    expect(welcomes.first.id, 'w1');
   });
 }

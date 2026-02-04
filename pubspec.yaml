@@ -71,9 +71,11 @@ flutter:
     - assets/content/zh-TW/affirmations.json
     - assets/content/zh-TW/micro_tasks.json
     - assets/content/zh-TW/mindfulness_guides.json
+    - assets/content/zh-TW/welcome_messages.json
     - assets/content/en/affirmations.json
     - assets/content/en/micro_tasks.json
     - assets/content/en/mindfulness_guides.json
+    - assets/content/en/welcome_messages.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "welcome_001",
+    "greeting": "早安{name}，我們在這裡。",
+    "direction": "今天只要做一件小事就好。",
+    "tags": ["soft"],
+    "weight": 3
+  },
+  {
+    "id": "welcome_002",
+    "greeting": "今天也可以慢慢來{name}。",
+    "direction": "先深呼吸三次，讓身體鬆一點。",
+    "tags": ["calm"],
+    "weight": 2
+  },
+  {
+    "id": "welcome_003",
+    "greeting": "很高興看到你{name}。",
+    "direction": "我們從一個微小的步驟開始。",
+    "tags": ["gentle"],
+    "weight": 2
+  },
+  {
+    "id": "welcome_004",
+    "greeting": "你不需要急{name}，我在。",
+    "direction": "今天只做一件讓心放鬆的小事。",
+    "tags": ["support"],
+    "weight": 2
+  },
+  {
+    "id": "welcome_005",
+    "greeting": "你好{name}，我們一起慢慢來。",
+    "direction": "先寫下一個你願意完成的小目標。",
+    "tags": ["hope"],
+    "weight": 2
+  },
+  {
+    "id": "welcome_006",
+    "greeting": "今天辛苦了{name}。",
+    "direction": "只要到這裡，你就已經做得很好。",
+    "tags": ["kind"],
+    "weight": 1
+  }
+]

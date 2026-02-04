@@ -30,6 +30,11 @@ class UserProfileViewModel extends StateNotifier<UserProfileModel> {
     state = state.copyWith(themeColorHex: hex);
     await _repository.save(state);
   }
+
+  Future<void> updateToneStyle(String toneStyle) async {
+    state = state.copyWith(toneStyle: toneStyle);
+    await _repository.save(state);
+  }
 }
 
 final userProfileViewModelProvider = StateNotifierProvider<UserProfileViewModel, UserProfileModel>(

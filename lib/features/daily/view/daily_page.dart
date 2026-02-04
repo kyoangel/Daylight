@@ -9,6 +9,8 @@ import '../../../features/profile/viewmodel/profile_viewmodel.dart';
 import '../../../common/app_locale.dart';
 import '../../../common/app_strings.dart';
 import '../../../common/locale_provider.dart';
+import '../service/welcome_service.dart';
+import '../../../data/content/models/welcome_message.dart';
 
 class DailyPage extends ConsumerStatefulWidget {
   const DailyPage({super.key});
@@ -24,8 +26,11 @@ class _DailyPageState extends ConsumerState<DailyPage> {
   String _currentLocale = 'zh-TW';
   Affirmation? _affirmation;
   MicroTask? _microTask;
+  WelcomeMessage? _welcomeMessage;
   bool _loadingContent = true;
+  bool _loadingWelcome = true;
   bool _pendingReload = false;
+  final WelcomeService _welcomeService = WelcomeService();
 
   @override
   void initState() {
@@ -34,6 +39,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     _currentLocale = normalizeLocale(profile.language);
     _contentRepository = ContentRepository(locale: _currentLocale);
     _loadContent();
+    _loadWelcome(locale: _currentLocale);
   }
 
   @override
@@ -55,6 +61,26 @@ class _DailyPageState extends ConsumerState<DailyPage> {
       _loadingContent = false;
       _pendingReload = false;
     });
+  }
+
+  Future<void> _loadWelcome({required String locale}) async {
+    setState(() {
+      _loadingWelcome = true;
+    });
+    final message = await _welcomeService.getTodayMessage(locale: locale);
+    if (!mounted) return;
+    setState(() {
+      _welcomeMessage = message;
+      _loadingWelcome = false;
+    });
+  }
+
+  String _personalize(String template, String nickname, String locale) {
+    if (nickname.isEmpty) {
+      return template.replaceAll('{name}', '');
+    }
+    final insert = locale == 'en' ? ' $nickname' : nickname;
+    return template.replaceAll('{name}', insert);
   }
 
   Future<void> _refreshContentByMood() async {
@@ -128,16 +154,46 @@ class _DailyPageState extends ConsumerState<DailyPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted || !_pendingReload) return;
         _loadContent();
+        _loadWelcome(locale: locale);
       });
     }
 
     final summary = _buildWeeklySummary(entries, strings);
+    final nickname = profile.nickname.trim();
+    final toneStyle = profile.toneStyle;
+    final greeting = _welcomeMessage == null
+        ? strings.welcomeFallbackGreeting
+        : _personalize(_welcomeMessage!.greeting, nickname, locale);
+    final direction = _welcomeMessage == null
+        ? strings.welcomeFallbackDirection
+        : _personalize(_welcomeMessage!.direction, nickname, locale);
+    final tonedGreeting = strings.applyToneToGreeting(greeting, toneStyle);
+    final tonedDirection = strings.applyToneToDirection(direction, toneStyle);
 
     return Scaffold(
       appBar: AppBar(title: Text(strings.dailyTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          Card(
+            elevation: 0,
+            color: Colors.teal.withOpacity(0.08),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: _loadingWelcome
+                  ? const LinearProgressIndicator()
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(tonedGreeting, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 6),
+                        Text(tonedDirection, style: const TextStyle(color: Colors.black54)),
+                      ],
+                    ),
+            ),
+          ),
+          const SizedBox(height: 16),
           Text(strings.weeklyTrend, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           if (trend.isEmpty)
@@ -189,7 +245,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(12),
-                child: Text(_affirmation!.text),
+                child: Text(strings.applyToneToAffirmation(_affirmation!.text, toneStyle)),
               ),
             )
           else

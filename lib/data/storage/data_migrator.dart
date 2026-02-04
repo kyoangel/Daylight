@@ -4,7 +4,7 @@ import 'local_storage.dart';
 class DataMigrator {
   DataMigrator({LocalStorage? storage}) : _storage = storage ?? LocalStorage();
 
-  static const int latestVersion = 1;
+  static const int latestVersion = 2;
 
   final LocalStorage _storage;
 
@@ -16,6 +16,10 @@ class DataMigrator {
     if (version < 1) {
       await _migrateToV1();
       version = 1;
+    }
+    if (version < 2) {
+      await _migrateToV2();
+      version = 2;
     }
 
     await _storage.writeInt(DataKeys.dataVersion, version);
@@ -32,7 +36,17 @@ class DataMigrator {
     updated.putIfAbsent('reminderTimes', () => <String>[]);
     updated.putIfAbsent('preferredModes', () => <String>[]);
     updated.putIfAbsent('triggers', () => <String>[]);
+    updated.putIfAbsent('toneStyle', () => 'gentle');
 
+    await _storage.writeJson(DataKeys.userProfile, updated);
+  }
+
+  Future<void> _migrateToV2() async {
+    final profile = await _storage.readJson(DataKeys.userProfile);
+    if (profile == null) return;
+
+    final updated = Map<String, dynamic>.from(profile);
+    updated.putIfAbsent('toneStyle', () => 'gentle');
     await _storage.writeJson(DataKeys.userProfile, updated);
   }
 }

@@ -20,7 +20,8 @@
   "reminderTimes": ["string"],
   "preferredModes": ["string"],
   "triggers": ["string"],
-  "moodBaseline": 0
+  "moodBaseline": 0,
+  "toneStyle": "string"
 }
 ```
 
@@ -81,6 +82,15 @@
     "messageTemplate": "string"
   }
 ]
+```
+
+### `welcome_state`
+```json
+{
+  "date": "YYYY-MM-DD",
+  "messageId": "string",
+  "locale": "string"
+}
 ```
 
 ## 遷移策略

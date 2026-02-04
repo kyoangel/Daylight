@@ -1,0 +1,44 @@
+[
+  {
+    "id": "welcome_001",
+    "greeting": "Good morning{name}, I'm here with you.",
+    "direction": "One small step is enough for today.",
+    "tags": ["soft"],
+    "weight": 3
+  },
+  {
+    "id": "welcome_002",
+    "greeting": "We can go slowly today{name}.",
+    "direction": "Take three gentle breaths first.",
+    "tags": ["calm"],
+    "weight": 2
+  },
+  {
+    "id": "welcome_003",
+    "greeting": "I'm glad you're here{name}.",
+    "direction": "Let's start with a tiny, kind step.",
+    "tags": ["gentle"],
+    "weight": 2
+  },
+  {
+    "id": "welcome_004",
+    "greeting": "No need to rush{name}, I'm with you.",
+    "direction": "Choose one small thing to soften your day.",
+    "tags": ["support"],
+    "weight": 2
+  },
+  {
+    "id": "welcome_005",
+    "greeting": "Hello{name}, let's take it gently.",
+    "direction": "Write down one doable intention.",
+    "tags": ["hope"],
+    "weight": 2
+  },
+  {
+    "id": "welcome_006",
+    "greeting": "You made it here{name}.",
+    "direction": "That alone is something to be proud of.",
+    "tags": ["kind"],
+    "weight": 1
+  }
+]

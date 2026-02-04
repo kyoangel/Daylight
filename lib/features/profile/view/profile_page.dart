@@ -123,6 +123,25 @@ class ProfilePage extends ConsumerWidget {
               }).toList(),
             ),
             const SizedBox(height: 32),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(strings.toneLabel, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            ),
+            const SizedBox(height: 12),
+            DropdownButton<String>(
+              value: profile.toneStyle,
+              isExpanded: true,
+              items: [
+                DropdownMenuItem(value: 'gentle', child: Text(strings.toneOptionLabel('gentle'))),
+                DropdownMenuItem(value: 'encourage', child: Text(strings.toneOptionLabel('encourage'))),
+                DropdownMenuItem(value: 'short', child: Text(strings.toneOptionLabel('short'))),
+              ],
+              onChanged: (value) {
+                if (value == null) return;
+                vm.updateToneStyle(value);
+              },
+            ),
+            const SizedBox(height: 32),
             // 其他設定可擴充...
           ],
         ),

@@ -30,5 +30,6 @@ void main() {
     expect(profile?['language'], 'zh-TW');
     expect(profile?['themeColorHex'], '#75C9E0');
     expect(profile?['moodBaseline'], 5);
+    expect(profile?['toneStyle'], 'gentle');
   });
 }

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:daylight/data/content/models/affirmation.dart';
 import 'package:daylight/data/content/models/micro_task.dart';
 import 'package:daylight/data/content/models/mindfulness_guide.dart';
+import 'package:daylight/data/content/models/welcome_message.dart';
 
 void main() {
   test('Affirmation json roundtrip', () {
@@ -49,5 +50,28 @@ void main() {
     expect(decoded.duration, '1 min');
     expect(decoded.steps, ['step']);
     expect(decoded.tags, ['tag']);
+  });
+
+  test('WelcomeMessage json roundtrip', () {
+    const model = WelcomeMessage(
+      id: 'w1',
+      greeting: 'hello',
+      direction: 'step',
+      tags: ['soft'],
+      weight: 2,
+    );
+    final json = {
+      'id': model.id,
+      'greeting': model.greeting,
+      'direction': model.direction,
+      'tags': model.tags,
+      'weight': model.weight,
+    };
+    final decoded = WelcomeMessage.fromJson(json);
+
+    expect(decoded.id, 'w1');
+    expect(decoded.greeting, 'hello');
+    expect(decoded.direction, 'step');
+    expect(decoded.tags, ['soft']);
   });
 }

@@ -26,6 +26,7 @@ void main() {
       preferredModes: ['text'],
       triggers: ['lonely'],
       moodBaseline: 3,
+      toneStyle: 'gentle',
     );
 
     await repo.save(profile);

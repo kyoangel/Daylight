@@ -6,4 +6,5 @@ class DataKeys {
   static const companionSessions = 'companion_sessions';
   static const sosContacts = 'sos_contacts';
   static const dataVersion = 'data_version';
+  static const welcomeState = 'welcome_state';
 }

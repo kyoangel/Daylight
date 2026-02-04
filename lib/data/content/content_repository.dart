@@ -2,6 +2,7 @@ import 'dart:math';
 import 'models/affirmation.dart';
 import 'models/micro_task.dart';
 import 'models/mindfulness_guide.dart';
+import 'models/welcome_message.dart';
 import 'content_loader.dart';
 import 'content_history_store.dart';
 import 'content_paths.dart';
@@ -35,6 +36,11 @@ class ContentRepository {
   Future<List<MindfulnessGuide>> loadMindfulnessGuides() async {
     final items = await _loader.loadList(ContentPaths.mindfulnessGuides(_locale));
     return items.map(MindfulnessGuide.fromJson).toList();
+  }
+
+  Future<List<WelcomeMessage>> loadWelcomeMessages() async {
+    final items = await _loader.loadList(ContentPaths.welcomeMessages(_locale));
+    return items.map(WelcomeMessage.fromJson).toList();
   }
 
   Future<Affirmation?> pickAffirmation({List<String>? tags}) async {
@@ -92,6 +98,7 @@ class ContentRepository {
     if (item is Affirmation) return item.tags;
     if (item is MicroTask) return item.tags;
     if (item is MindfulnessGuide) return item.tags;
+    if (item is WelcomeMessage) return item.tags;
     return null;
   }
 
@@ -107,6 +114,7 @@ class ContentRepository {
     if (item is Affirmation) return item.id;
     if (item is MicroTask) return item.id;
     if (item is MindfulnessGuide) return item.id;
+    if (item is WelcomeMessage) return item.id;
     return null;
   }
 
@@ -114,6 +122,7 @@ class ContentRepository {
     if (item is Affirmation) return item.weight;
     if (item is MicroTask) return item.weight;
     if (item is MindfulnessGuide) return item.weight;
+    if (item is WelcomeMessage) return item.weight;
     return 1;
   }
 

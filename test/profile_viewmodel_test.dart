@@ -42,10 +42,23 @@ void main() {
     expect(loaded.themeColorHex, '#FFFFFF');
   });
 
+  test('UserProfileViewModel updates tone style', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repository = UserProfileRepository();
+    final viewModel = UserProfileViewModel(repository: repository);
+
+    await viewModel.updateToneStyle('encourage');
+    expect(viewModel.state.toneStyle, 'encourage');
+
+    final loaded = await repository.load();
+    expect(loaded.toneStyle, 'encourage');
+  });
+
   test('UserProfileModel initial defaults', () {
     final profile = UserProfileModel.initial();
     expect(profile.nickname, '');
     expect(profile.language, 'zh-TW');
     expect(profile.themeColorHex, '#75C9E0');
+    expect(profile.toneStyle, 'gentle');
   });
 }

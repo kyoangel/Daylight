@@ -7,6 +7,7 @@ class UserProfileModel {
   final List<String> preferredModes;
   final List<String> triggers;
   final int moodBaseline;
+  final String toneStyle;
 
   const UserProfileModel({
     required this.nickname,
@@ -17,6 +18,7 @@ class UserProfileModel {
     required this.preferredModes,
     required this.triggers,
     required this.moodBaseline,
+    required this.toneStyle,
   });
 
   UserProfileModel copyWith({
@@ -28,6 +30,7 @@ class UserProfileModel {
     List<String>? preferredModes,
     List<String>? triggers,
     int? moodBaseline,
+    String? toneStyle,
   }) {
     return UserProfileModel(
       nickname: nickname ?? this.nickname,
@@ -38,6 +41,7 @@ class UserProfileModel {
       preferredModes: preferredModes ?? this.preferredModes,
       triggers: triggers ?? this.triggers,
       moodBaseline: moodBaseline ?? this.moodBaseline,
+      toneStyle: toneStyle ?? this.toneStyle,
     );
   }
 
@@ -51,6 +55,7 @@ class UserProfileModel {
       preferredModes: [],
       triggers: [],
       moodBaseline: 5,
+      toneStyle: 'gentle',
     );
   }
 
@@ -64,6 +69,7 @@ class UserProfileModel {
       preferredModes: List<String>.from(json['preferredModes'] ?? const []),
       triggers: List<String>.from(json['triggers'] ?? const []),
       moodBaseline: json['moodBaseline'] ?? 5,
+      toneStyle: json['toneStyle'] ?? 'gentle',
     );
   }
 
@@ -77,6 +83,7 @@ class UserProfileModel {
       'preferredModes': preferredModes,
       'triggers': triggers,
       'moodBaseline': moodBaseline,
+      'toneStyle': toneStyle,
     };
   }
 }

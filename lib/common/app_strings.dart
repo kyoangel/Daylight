@@ -22,6 +22,7 @@ class AppStrings {
   String get preferredInteractionLabel => isEnglish ? 'Preferred interaction (multi-select)' : '互動方式（多選）';
   String get triggersLabel => isEnglish ? 'Triggers (multi-select)' : '觸發源（多選）';
   String get moodBaselineLabel => isEnglish ? 'Mood baseline' : '心情基準';
+  String get toneLabel => isEnglish ? 'Support tone' : '陪伴語氣';
 
   String get onboardingWelcome => isEnglish ? 'Welcome' : '歡迎';
   String get onboardingWelcomeBody => isEnglish
@@ -50,6 +51,14 @@ class AppStrings {
   String get reflectionHint => isEnglish ? 'What moment felt a bit lighter today?' : '今天哪一刻你覺得稍微輕鬆？';
   String get saveToday => isEnglish ? 'Save Today' : '保存今日';
   String get savedToday => isEnglish ? 'Saved today' : '今日已保存';
+  String get welcomeFallbackGreeting => isEnglish ? 'I am here with you.' : '我在這裡陪你。';
+  String get welcomeFallbackDirection => isEnglish ? 'Just one small step is enough.' : '今天只要一小步就好。';
+  String get toneShortDirection => isEnglish ? 'One small step is enough.' : '今天只要一小步就好。';
+  String get toneGentleGreetingTail => isEnglish ? ' Take your time.' : ' 慢慢來就好。';
+  String get toneEncourageGreetingTail => isEnglish ? ' You can do this.' : ' 你做得到。';
+  String get toneEncourageDirectionTail => isEnglish ? ' I believe in you.' : ' 我相信你。';
+  String get toneGentleAffirmationPrefix => isEnglish ? 'A gentle reminder: ' : '溫柔提醒：';
+  String get toneEncourageAffirmationPrefix => isEnglish ? 'Let’s keep going: ' : '一起加油：';
   String weeklySummary(double avg, int max, int min) => isEnglish
       ? 'Weekly average ${avg.toStringAsFixed(1)}, high $max, low $min.'
       : '本週平均心情 ${avg.toStringAsFixed(1)}，最高 $max，最低 $min。';
@@ -96,6 +105,64 @@ class AppStrings {
     if (code == 'zh-TW') return isEnglish ? 'Traditional Chinese' : '繁體中文';
     if (code == 'en') return 'English';
     return code;
+  }
+
+  String toneOptionLabel(String tone) {
+    if (isEnglish) {
+      switch (tone) {
+        case 'gentle':
+          return 'Gentle';
+        case 'encourage':
+          return 'Encouraging';
+        case 'short':
+          return 'Short';
+        default:
+          return tone;
+      }
+    }
+    switch (tone) {
+      case 'gentle':
+        return '溫柔';
+      case 'encourage':
+        return '鼓勵';
+      case 'short':
+        return '簡短';
+      default:
+        return tone;
+    }
+  }
+
+  String applyToneToGreeting(String greeting, String tone) {
+    switch (tone) {
+      case 'encourage':
+        return '$greeting$toneEncourageGreetingTail';
+      case 'gentle':
+        return '$greeting$toneGentleGreetingTail';
+      default:
+        return greeting;
+    }
+  }
+
+  String applyToneToDirection(String direction, String tone) {
+    switch (tone) {
+      case 'short':
+        return toneShortDirection;
+      case 'encourage':
+        return '$direction$toneEncourageDirectionTail';
+      default:
+        return direction;
+    }
+  }
+
+  String applyToneToAffirmation(String affirmation, String tone) {
+    switch (tone) {
+      case 'encourage':
+        return '$toneEncourageAffirmationPrefix$affirmation';
+      case 'gentle':
+        return '$toneGentleAffirmationPrefix$affirmation';
+      default:
+        return affirmation;
+    }
   }
 
   String preferredModeLabel(String mode) {

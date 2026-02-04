@@ -18,6 +18,7 @@ void main() {
       preferredModes: ['text'],
       triggers: ['lonely'],
       moodBaseline: 4,
+      toneStyle: 'encourage',
     );
 
     final json = profile.toJson();
@@ -31,6 +32,7 @@ void main() {
     expect(decoded.preferredModes, profile.preferredModes);
     expect(decoded.triggers, profile.triggers);
     expect(decoded.moodBaseline, profile.moodBaseline);
+    expect(decoded.toneStyle, profile.toneStyle);
   });
 
   test('OnboardingState json roundtrip', () {
