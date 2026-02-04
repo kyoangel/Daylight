@@ -123,6 +123,32 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     return trend;
   }
 
+  bool _shouldShowSoftIntervention(List<DailyEntry> entries, DateTime now) {
+    final today = DateTime(now.year, now.month, now.day);
+    final recent = entries.where((entry) {
+      final day = DateTime(entry.date.year, entry.date.month, entry.date.day);
+      final diff = today.difference(day).inDays;
+      return diff >= 0 && diff <= 2;
+    }).toList()
+      ..sort((a, b) => b.date.compareTo(a.date));
+
+    if (recent.length < 2) return false;
+
+    final avg = recent.map((e) => e.moodScore).reduce((a, b) => a + b) / recent.length;
+    if (avg <= 4) return true;
+
+    var consecutive = 0;
+    for (final entry in recent) {
+      if (entry.moodScore <= 3) {
+        consecutive += 1;
+        if (consecutive >= 2) return true;
+      } else {
+        consecutive = 0;
+      }
+    }
+    return false;
+  }
+
   String _buildWeeklySummary(List<DailyEntry> entries, AppStrings strings) {
     if (entries.isEmpty) return '';
     final today = DateTime.now();
@@ -169,6 +195,8 @@ class _DailyPageState extends ConsumerState<DailyPage> {
         : _personalize(_welcomeMessage!.direction, nickname, locale);
     final tonedGreeting = strings.applyToneToGreeting(greeting, toneStyle);
     final tonedDirection = strings.applyToneToDirection(direction, toneStyle);
+    final showSoftIntervention = _shouldShowSoftIntervention(entries, DateTime.now());
+    final softSuggestions = strings.softInterventionSuggestions(toneStyle);
 
     return Scaffold(
       appBar: AppBar(title: Text(strings.dailyTitle)),
@@ -194,6 +222,37 @@ class _DailyPageState extends ConsumerState<DailyPage> {
             ),
           ),
           const SizedBox(height: 16),
+          if (showSoftIntervention) ...[
+            Card(
+              elevation: 0,
+              color: Colors.orange.withOpacity(0.08),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(strings.softInterventionTitle,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 6),
+                    Text(strings.softInterventionBody, style: const TextStyle(color: Colors.black54)),
+                    const SizedBox(height: 12),
+                    ...softSuggestions.map((text) => Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('• ', style: TextStyle(color: Colors.black54)),
+                              Expanded(child: Text(text)),
+                            ],
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
           Text(strings.weeklyTrend, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           if (trend.isEmpty)

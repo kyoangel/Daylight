@@ -59,6 +59,10 @@ class AppStrings {
   String get toneEncourageDirectionTail => isEnglish ? ' I believe in you.' : ' 我相信你。';
   String get toneGentleAffirmationPrefix => isEnglish ? 'A gentle reminder: ' : '溫柔提醒：';
   String get toneEncourageAffirmationPrefix => isEnglish ? 'Let’s keep going: ' : '一起加油：';
+  String get softInterventionTitle => isEnglish ? 'Would a gentle moment help?' : '需要一點溫柔的陪伴嗎？';
+  String get softInterventionBody => isEnglish
+      ? 'You have been carrying a lot lately. We can keep it small.'
+      : '最近辛苦了，我們把步伐放小一點。';
   String weeklySummary(double avg, int max, int min) => isEnglish
       ? 'Weekly average ${avg.toStringAsFixed(1)}, high $max, low $min.'
       : '本週平均心情 ${avg.toStringAsFixed(1)}，最高 $max，最低 $min。';
@@ -162,6 +166,51 @@ class AppStrings {
         return '$toneGentleAffirmationPrefix$affirmation';
       default:
         return affirmation;
+    }
+  }
+
+  List<String> softInterventionSuggestions(String tone) {
+    if (isEnglish) {
+      switch (tone) {
+        case 'short':
+          return [
+            'Take 3 breaths.',
+            'Pick one tiny task.',
+            'Write one line.',
+          ];
+        case 'encourage':
+          return [
+            'Take 3 breaths. You’re doing great.',
+            'Pick one tiny task. I’m with you.',
+            'Write one line. That is enough.',
+          ];
+        default:
+          return [
+            'Take 3 gentle breaths.',
+            'Pick one tiny task.',
+            'Write one kind line to yourself.',
+          ];
+      }
+    }
+    switch (tone) {
+      case 'short':
+        return [
+          '先深呼吸 3 次。',
+          '挑一個小任務。',
+          '寫下一句話。',
+        ];
+      case 'encourage':
+        return [
+          '先深呼吸 3 次，你做得到。',
+          '挑一個小任務，我陪你。',
+          '寫下一句話，這樣就很好了。',
+        ];
+      default:
+        return [
+          '先深呼吸 3 次。',
+          '挑一個小任務。',
+          '寫下一句對自己的溫柔話。',
+        ];
     }
   }
 
