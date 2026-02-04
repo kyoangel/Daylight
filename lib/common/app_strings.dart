@@ -63,6 +63,13 @@ class AppStrings {
   String get softInterventionBody => isEnglish
       ? 'You have been carrying a lot lately. We can keep it small.'
       : '最近辛苦了，我們把步伐放小一點。';
+  String get close => isEnglish ? 'Close' : '關閉';
+  String get nightlyClosingTitle => isEnglish ? 'Good night' : '晚安結語';
+  String get nightlyClosingBodyGentle =>
+      isEnglish ? 'You did enough for today. Rest now.' : '今天已經做得夠多了，先好好休息。';
+  String get nightlyClosingBodyEncourage =>
+      isEnglish ? 'You showed up today. That matters.' : '今天你願意出現，就已經很重要了。';
+  String get nightlyClosingBodyShort => isEnglish ? 'Rest well.' : '晚安，好好休息。';
   String weeklySummary(double avg, int max, int min) => isEnglish
       ? 'Weekly average ${avg.toStringAsFixed(1)}, high $max, low $min.'
       : '本週平均心情 ${avg.toStringAsFixed(1)}，最高 $max，最低 $min。';
@@ -211,6 +218,17 @@ class AppStrings {
           '挑一個小任務。',
           '寫下一句對自己的溫柔話。',
         ];
+    }
+  }
+
+  String nightlyClosingBody(String tone) {
+    switch (tone) {
+      case 'encourage':
+        return nightlyClosingBodyEncourage;
+      case 'short':
+        return nightlyClosingBodyShort;
+      default:
+        return nightlyClosingBodyGentle;
     }
   }
 

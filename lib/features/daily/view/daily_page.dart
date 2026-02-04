@@ -336,6 +336,23 @@ class _DailyPageState extends ConsumerState<DailyPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(strings.savedToday)),
               );
+              final closingBody = strings.nightlyClosingBody(toneStyle);
+              if (!mounted) return;
+              await showDialog<void>(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text(strings.nightlyClosingTitle),
+                    content: Text(closingBody),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(strings.close),
+                      ),
+                    ],
+                  );
+                },
+              );
             },
             child: Text(strings.saveToday),
           ),
