@@ -47,6 +47,7 @@ class DaylightApp extends ConsumerWidget {
           backgroundColor: appTheme.color.withOpacity(0.08),
           selectedItemColor: appTheme.color,
           unselectedItemColor: Colors.grey,
+          elevation: 0,
         ),
       ),
       home: const MainNavigation(),
