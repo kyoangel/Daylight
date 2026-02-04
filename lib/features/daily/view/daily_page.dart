@@ -26,6 +26,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
   String _currentLocale = 'zh-TW';
   Affirmation? _affirmation;
   MicroTask? _microTask;
+  bool _microTaskDone = false;
   WelcomeMessage? _welcomeMessage;
   bool _loadingContent = true;
   bool _loadingWelcome = true;
@@ -58,6 +59,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     setState(() {
       _affirmation = affirmations.isNotEmpty ? affirmations.first : null;
       _microTask = tasks.isNotEmpty ? tasks.first : null;
+      _microTaskDone = false;
       _loadingContent = false;
       _pendingReload = false;
     });
@@ -94,6 +96,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     setState(() {
       _affirmation = pickedAffirmation;
       _microTask = pickedTask;
+      _microTaskDone = false;
       _loadingContent = false;
     });
   }
@@ -293,6 +296,21 @@ class _DailyPageState extends ConsumerState<DailyPage> {
               child: ListTile(
                 title: Text(_microTask!.title),
                 subtitle: Text(_microTask!.description),
+                trailing: Checkbox(
+                  value: _microTaskDone,
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() {
+                      _microTaskDone = value;
+                    });
+                    if (value) {
+                      final response = strings.responseTaskDoneLine(toneStyle);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(response)),
+                      );
+                    }
+                  },
+                ),
               ),
             )
           else
@@ -329,14 +347,15 @@ class _DailyPageState extends ConsumerState<DailyPage> {
                 date: DateTime.now(),
                 moodScore: _moodScore.round(),
                 microTaskId: _microTask?.id ?? 'default',
-                microTaskDone: _microTask != null,
+                microTaskDone: _microTaskDone,
                 affirmationId: _affirmation?.id ?? 'default',
                 nightReflection: _reflectionController.text.trim(),
               );
               await vm.upsertEntry(entry);
               if (!mounted) return;
+              final response = strings.responseSavedLine(toneStyle);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(strings.savedToday)),
+                SnackBar(content: Text(response)),
               );
               final closingBody = strings.nightlyClosingBody(toneStyle);
               if (!mounted) return;

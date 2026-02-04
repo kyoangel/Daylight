@@ -18,4 +18,15 @@ void main() {
     expect(strings.weeklyClosingLine('encourage'), strings.weeklyClosingEncourage);
     expect(strings.weeklyClosingLine('short'), strings.weeklyClosingShort);
   });
+
+  test('AppStrings response lines respect tone', () {
+    final strings = AppStrings.of('zh-TW');
+
+    expect(strings.responseSavedLine('gentle'), strings.responseSavedGentle);
+    expect(strings.responseSavedLine('encourage'), strings.responseSavedEncourage);
+    expect(strings.responseSavedLine('short'), strings.responseSavedShort);
+    expect(strings.responseTaskDoneLine('gentle'), strings.responseTaskDoneGentle);
+    expect(strings.responseTaskDoneLine('encourage'), strings.responseTaskDoneEncourage);
+    expect(strings.responseTaskDoneLine('short'), strings.responseTaskDoneShort);
+  });
 }

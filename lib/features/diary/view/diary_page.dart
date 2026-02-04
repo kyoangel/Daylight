@@ -193,8 +193,9 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
               );
               await vm.addEntry(entry);
               if (!mounted) return;
+              final response = strings.responseSavedLine(profile.toneStyle);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(strings.diarySaved)),
+                SnackBar(content: Text(response)),
               );
             },
             child: Text(strings.saveDiary),

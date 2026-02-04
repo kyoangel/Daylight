@@ -75,6 +75,12 @@ class AppStrings {
   String get weeklyClosingEncourage =>
       isEnglish ? 'You kept going this week.' : '這一週你一直在努力。';
   String get weeklyClosingShort => isEnglish ? 'Keep it light.' : '保持輕盈就好。';
+  String get responseSavedGentle => isEnglish ? 'I have noted it.' : '我已經記住了。';
+  String get responseSavedEncourage => isEnglish ? 'Well done. I am with you.' : '做得好，我陪你。';
+  String get responseSavedShort => isEnglish ? 'Noted.' : '已記錄。';
+  String get responseTaskDoneGentle => isEnglish ? 'You did it, softly.' : '你完成了，真好。';
+  String get responseTaskDoneEncourage => isEnglish ? 'Great job. Keep going.' : '做得很好，繼續加油。';
+  String get responseTaskDoneShort => isEnglish ? 'Done.' : '完成。';
   String weeklySummary(double avg, int max, int min) => isEnglish
       ? 'Weekly average ${avg.toStringAsFixed(1)}, high $max, low $min.'
       : '本週平均心情 ${avg.toStringAsFixed(1)}，最高 $max，最低 $min。';
@@ -245,6 +251,28 @@ class AppStrings {
         return weeklyClosingShort;
       default:
         return weeklyClosingGentle;
+    }
+  }
+
+  String responseSavedLine(String tone) {
+    switch (tone) {
+      case 'encourage':
+        return responseSavedEncourage;
+      case 'short':
+        return responseSavedShort;
+      default:
+        return responseSavedGentle;
+    }
+  }
+
+  String responseTaskDoneLine(String tone) {
+    switch (tone) {
+      case 'encourage':
+        return responseTaskDoneEncourage;
+      case 'short':
+        return responseTaskDoneShort;
+      default:
+        return responseTaskDoneGentle;
     }
   }
 
