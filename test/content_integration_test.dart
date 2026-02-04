@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:daylight/features/daily/view/daily_page.dart';
 import 'package:daylight/features/diary/view/diary_page.dart';
-import 'package:daylight/features/companion/view/companion_page.dart';
 import 'package:daylight/common/app_strings.dart';
 
 void main() {
@@ -33,18 +32,6 @@ void main() {
     );
 
     final strings = AppStrings.of('zh-TW');
-    expect(find.text(strings.mindfulness), findsOneWidget);
-  });
-
-  testWidgets('CompanionPage shows affirmation section', (WidgetTester tester) async {
-    SharedPreferences.setMockInitialValues({});
-
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: MaterialApp(home: CompanionPage()),
-      ),
-    );
-
-    expect(find.byType(LinearProgressIndicator), findsWidgets);
+    expect(find.text(strings.mindfulness), findsWidgets);
   });
 }

@@ -13,7 +13,6 @@ void main() {
     expect(find.byType(BottomNavigationBar), findsOneWidget);
     final strings = AppStrings.of('zh-TW');
     expect(find.text(strings.navDaily), findsOneWidget);
-    expect(find.text(strings.navCompanion), findsOneWidget);
     expect(find.text(strings.navDiary), findsOneWidget);
     expect(find.text(strings.navProfile), findsOneWidget);
   });

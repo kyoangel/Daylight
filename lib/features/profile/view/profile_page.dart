@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodel/profile_viewmodel.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:crop_your_image/crop_your_image.dart';
-import 'dart:convert';
-import 'dart:typed_data';
-import 'package:image/image.dart' as img;
 import '../../../core/theme/theme_provider.dart';
 import '../../../core/theme/theme_model.dart';
-import '../../../common/avatar_image.dart';
 import '../../../common/app_strings.dart';
 import '../../../common/locale_provider.dart';
 
@@ -39,30 +33,7 @@ class ProfilePage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // 個人照片
-            GestureDetector(
-              onTap: () async {
-                final XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
-                if (image == null) return;
-                final bytes = await image.readAsBytes();
-                await _showCropper(
-                  context: context,
-                  vm: vm,
-                  theme: appTheme,
-                  original: bytes,
-                  strings: strings,
-                );
-              },
-              child: CircleAvatar(
-                radius: 48,
-                backgroundColor: appTheme.color.withOpacity(0.2),
-                backgroundImage: avatarImageProvider(profile.avatarUrl),
-                child: profile.avatarUrl == null
-                    ? Icon(Icons.camera_alt, color: appTheme.color, size: 36)
-                    : null,
-              ),
-            ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 8),
             // 暱稱編輯
             Row(
               children: [
@@ -149,122 +120,4 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
-  Future<void> _showCropper({
-    required BuildContext context,
-    required UserProfileViewModel vm,
-    required AppTheme theme,
-    required Uint8List original,
-    required AppStrings strings,
-  }) async {
-    final controller = CropController();
-    Uint8List current = original;
-    double sizeRatio = 0.8;
-    Size viewport = const Size(320, 320);
-
-    await showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            Future<void> rotate(int angle) async {
-              final decoded = img.decodeImage(current);
-              if (decoded == null) return;
-              final rotated = img.copyRotate(decoded, angle: angle);
-              final encoded = Uint8List.fromList(img.encodePng(rotated));
-              setState(() {
-                current = encoded;
-                controller.image = current;
-              });
-            }
-
-            void updateCropRect(double ratio) {
-              sizeRatio = ratio;
-              final size = (viewport.shortestSide * ratio)
-                  .clamp(120.0, viewport.shortestSide)
-                  .toDouble();
-              final rect = Rect.fromCenter(
-                center: viewport.center(Offset.zero),
-                width: size,
-                height: size,
-              );
-              controller.cropRect = rect;
-            }
-
-            return AlertDialog(
-              title: Text(strings.cropPhotoTitle),
-              content: SizedBox(
-                width: 360,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      height: 320,
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          viewport = Size(constraints.maxWidth, constraints.maxHeight);
-                          return Crop(
-                            image: current,
-                            controller: controller,
-                            withCircleUi: true,
-                            interactive: true,
-                            baseColor: Colors.black12,
-                            maskColor: Colors.black38,
-                            initialSize: sizeRatio,
-                            onCropped: (cropped) async {
-                              final dataUri = 'data:image/png;base64,${base64Encode(cropped)}';
-                              await vm.updateAvatar(dataUri);
-                              if (Navigator.of(dialogContext).canPop()) {
-                                Navigator.of(dialogContext).pop();
-                              }
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.rotate_left),
-                          onPressed: () => rotate(-90),
-                        ),
-                        Expanded(
-                          child: Slider(
-                            value: sizeRatio,
-                            min: 0.5,
-                            max: 1.0,
-                            divisions: 5,
-                            onChanged: (value) {
-                              setState(() {
-                                updateCropRect(value);
-                              });
-                            },
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.rotate_right),
-                          onPressed: () => rotate(90),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: Text(strings.cropCancel),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: theme.color),
-                  onPressed: () => controller.cropCircle(),
-                  child: Text(strings.cropApply, style: const TextStyle(color: Colors.white)),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-} 
+}

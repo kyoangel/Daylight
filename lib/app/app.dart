@@ -6,7 +6,6 @@ import '../common/app_strings.dart';
 import '../common/locale_provider.dart';
 import '../features/onboarding/view/onboarding_page.dart';
 import '../features/daily/view/daily_page.dart';
-import '../features/companion/view/companion_page.dart';
 import '../features/diary/view/diary_page.dart';
 import '../features/sos/view/sos_page.dart';
 import '../features/profile/view/profile_page.dart';
@@ -54,7 +53,6 @@ class DaylightApp extends ConsumerWidget {
       routes: {
         '/onboarding': (_) => const OnboardingPage(),
         '/daily': (_) => const DailyPage(),
-        '/companion': (_) => const CompanionPage(),
         '/diary': (_) => const DiaryPage(),
         '/sos': (_) => const SOSPage(),
         '/profile': (_) => const ProfilePage(),
@@ -74,7 +72,6 @@ class _MainNavigationState extends ConsumerState<MainNavigation> {
   int _currentIndex = 0;
   final List<Widget> _pages = const [
     DailyPage(),
-    CompanionPage(),
     DiaryPage(),
     ProfilePage(),
   ];
@@ -94,7 +91,6 @@ class _MainNavigationState extends ConsumerState<MainNavigation> {
         },
         items: [
           BottomNavigationBarItem(icon: const Icon(Icons.wb_sunny), label: strings.navDaily),
-          BottomNavigationBarItem(icon: const Icon(Icons.chat_bubble_outline), label: strings.navCompanion),
           BottomNavigationBarItem(icon: const Icon(Icons.book), label: strings.navDiary),
           BottomNavigationBarItem(icon: const Icon(Icons.person), label: strings.navProfile),
         ],

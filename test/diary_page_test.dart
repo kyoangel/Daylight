@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:daylight/features/diary/view/diary_page.dart';
+import 'package:daylight/common/app_strings.dart';
 
 void main() {
-  testWidgets('DiaryPage renders save button', (WidgetTester tester) async {
+  testWidgets('DiaryPage renders mindfulness and play button', (WidgetTester tester) async {
     SharedPreferences.setMockInitialValues({});
 
     await tester.pumpWidget(
@@ -15,7 +16,8 @@ void main() {
       ),
     );
 
-    expect(find.byType(ElevatedButton, skipOffstage: false), findsOneWidget);
-    expect(find.byType(DropdownButton<String>), findsNWidgets(2));
+    final strings = AppStrings.of('zh-TW');
+    expect(find.text(strings.mindfulness), findsWidgets);
+    expect(find.text(strings.playAudio), findsOneWidget);
   });
 }

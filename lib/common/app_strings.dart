@@ -51,6 +51,8 @@ class AppStrings {
   String get reflectionHint => isEnglish ? 'What moment felt a bit lighter today?' : '今天哪一刻你覺得稍微輕鬆？';
   String get saveToday => isEnglish ? 'Save Today' : '保存今日';
   String get savedToday => isEnglish ? 'Saved today' : '今日已保存';
+  String get playAudio => isEnglish ? 'Play audio' : '播放引導錄音';
+  String get audioMissing => isEnglish ? 'Audio not available yet.' : '尚未提供錄音檔';
   String get welcomeFallbackGreeting => isEnglish ? 'I am here with you.' : '我在這裡陪你。';
   String get welcomeFallbackDirection => isEnglish ? 'Just one small step is enough.' : '今天只要一小步就好。';
   String get toneShortDirection => isEnglish ? 'One small step is enough.' : '今天只要一小步就好。';

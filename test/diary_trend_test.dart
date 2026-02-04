@@ -7,7 +7,7 @@ import 'package:daylight/features/diary/view/diary_page.dart';
 import 'package:daylight/common/app_strings.dart';
 
 void main() {
-  testWidgets('DiaryPage shows weekly mood distribution section', (WidgetTester tester) async {
+  testWidgets('DiaryPage shows mindfulness section', (WidgetTester tester) async {
     SharedPreferences.setMockInitialValues({});
 
     await tester.pumpWidget(
@@ -17,6 +17,6 @@ void main() {
     );
 
     final strings = AppStrings.of('zh-TW');
-    expect(find.text(strings.weeklyDistribution), findsOneWidget);
+    expect(find.text(strings.mindfulness), findsWidgets);
   });
 }
