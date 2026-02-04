@@ -29,4 +29,12 @@ void main() {
     expect(strings.responseTaskDoneLine('encourage'), strings.responseTaskDoneEncourage);
     expect(strings.responseTaskDoneLine('short'), strings.responseTaskDoneShort);
   });
+
+  test('AppStrings companion reply respects tone', () {
+    final strings = AppStrings.of('zh-TW');
+
+    expect(strings.companionReplyLine('gentle'), strings.companionReplyGentle);
+    expect(strings.companionReplyLine('encourage'), strings.companionReplyEncourage);
+    expect(strings.companionReplyLine('short'), strings.companionReplyShort);
+  });
 }

@@ -19,6 +19,7 @@ class CompanionPage extends ConsumerStatefulWidget {
 class _CompanionPageState extends ConsumerState<CompanionPage> {
   final TextEditingController _inputController = TextEditingController();
   String _selectedMode = 'listen';
+  List<CompanionSession> _sessions = [];
   ContentRepository _contentRepository = ContentRepository(locale: 'zh-TW');
   String _currentLocale = 'zh-TW';
   Affirmation? _affirmation;
@@ -34,6 +35,7 @@ class _CompanionPageState extends ConsumerState<CompanionPage> {
   void initState() {
     super.initState();
     _loadAffirmation();
+    _loadSessions();
   }
 
   Future<void> _loadAffirmation() async {
@@ -42,6 +44,16 @@ class _CompanionPageState extends ConsumerState<CompanionPage> {
     setState(() {
       _affirmation = affirmations.isNotEmpty ? affirmations.first : null;
       _loadingAffirmation = false;
+    });
+  }
+
+  Future<void> _loadSessions() async {
+    final repo = CompanionRepository();
+    final items = await repo.loadAll();
+    if (!mounted) return;
+    items.sort((a, b) => b.startAt.compareTo(a.startAt));
+    setState(() {
+      _sessions = items;
     });
   }
 
@@ -91,7 +103,32 @@ class _CompanionPageState extends ConsumerState<CompanionPage> {
               },
             ),
           ),
-          Expanded(child: ListView()),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              children: [
+                Text(strings.companionHeader,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
+                if (_sessions.isEmpty)
+                  Text(strings.companionEmpty)
+                else
+                  ..._sessions.take(3).map((session) {
+                    final modeLabel = strings.companionModeLabel(session.mode);
+                    return Card(
+                      child: ListTile(
+                        title: Text(modeLabel),
+                        subtitle: Text(session.summary),
+                        trailing: Text(
+                          '${session.startAt.month}/${session.startAt.day}',
+                          style: const TextStyle(color: Colors.black54),
+                        ),
+                      ),
+                    );
+                  }),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -119,8 +156,10 @@ class _CompanionPageState extends ConsumerState<CompanionPage> {
                     await repo.add(session);
                     if (!mounted) return;
                     _inputController.clear();
+                    await _loadSessions();
+                    final response = strings.companionReplyLine(profile.toneStyle);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(strings.companionSaved)),
+                      SnackBar(content: Text(response)),
                     );
                   },
                 ),

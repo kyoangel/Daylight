@@ -81,6 +81,14 @@ class AppStrings {
   String get responseTaskDoneGentle => isEnglish ? 'You did it, softly.' : '你完成了，真好。';
   String get responseTaskDoneEncourage => isEnglish ? 'Great job. Keep going.' : '做得很好，繼續加油。';
   String get responseTaskDoneShort => isEnglish ? 'Done.' : '完成。';
+  String get companionHeader => isEnglish ? 'Your companion notes' : '陪伴紀錄';
+  String get companionEmpty => isEnglish ? 'No sessions yet.' : '目前沒有陪伴紀錄';
+  String get companionModeListen => isEnglish ? 'I want to be heard' : '我想被傾聽';
+  String get companionModeCalm => isEnglish ? 'Quiet reset' : '我想安靜整理一下';
+  String get companionModeCompanion => isEnglish ? '10-minute companion' : '陪伴 10 分鐘';
+  String get companionReplyGentle => isEnglish ? 'Thank you for sharing. I am here.' : '謝謝你願意說，我在。';
+  String get companionReplyEncourage => isEnglish ? 'You did well to say it.' : '你願意說出來很不容易。';
+  String get companionReplyShort => isEnglish ? 'Received.' : '收到。';
   String weeklySummary(double avg, int max, int min) => isEnglish
       ? 'Weekly average ${avg.toStringAsFixed(1)}, high $max, low $min.'
       : '本週平均心情 ${avg.toStringAsFixed(1)}，最高 $max，最低 $min。';
@@ -276,6 +284,30 @@ class AppStrings {
     }
   }
 
+  String companionReplyLine(String tone) {
+    switch (tone) {
+      case 'encourage':
+        return companionReplyEncourage;
+      case 'short':
+        return companionReplyShort;
+      default:
+        return companionReplyGentle;
+    }
+  }
+
+  String companionModeLabel(String mode) {
+    switch (mode) {
+      case 'listen':
+        return companionModeListen;
+      case 'calm':
+        return companionModeCalm;
+      case 'companion':
+        return companionModeCompanion;
+      default:
+        return mode;
+    }
+  }
+
   String preferredModeLabel(String mode) {
     if (isEnglish) {
       switch (mode) {
@@ -323,31 +355,6 @@ class AppStrings {
         return '身體不適';
       default:
         return trigger;
-    }
-  }
-
-  String companionModeLabel(String mode) {
-    if (isEnglish) {
-      switch (mode) {
-        case 'listen':
-          return 'I want to be heard';
-        case 'calm':
-          return 'Quiet reset';
-        case 'companion':
-          return '10-minute companion';
-        default:
-          return mode;
-      }
-    }
-    switch (mode) {
-      case 'listen':
-        return '我想被傾聽';
-      case 'calm':
-        return '我想安靜整理一下';
-      case 'companion':
-        return '陪伴 10 分鐘';
-      default:
-        return mode;
     }
   }
 

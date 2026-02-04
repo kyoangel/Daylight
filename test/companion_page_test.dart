@@ -17,5 +17,6 @@ void main() {
 
     expect(find.byType(TextField), findsOneWidget);
     expect(find.byIcon(Icons.send), findsOneWidget);
+    expect(find.byType(ListView), findsOneWidget);
   });
 }
