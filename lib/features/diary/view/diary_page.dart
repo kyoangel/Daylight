@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:audioplayers/audioplayers.dart';
 import '../../../data/content/content_repository.dart';
 import '../../../data/content/models/mindfulness_guide.dart';
 import '../../../features/profile/viewmodel/profile_viewmodel.dart';
@@ -19,11 +20,29 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
   String _currentLocale = 'zh-TW';
   MindfulnessGuide? _guide;
   bool _loadingGuide = true;
+  final AudioPlayer _player = AudioPlayer();
+  bool _isPlaying = false;
+  bool _audioReady = false;
+  static const String _audioAsset = 'assets/audio/mindfulness.mp3';
 
   @override
   void initState() {
     super.initState();
     _loadGuide();
+    _prepareAudio();
+  }
+
+  Future<void> _prepareAudio() async {
+    try {
+      await _player.setSource(AssetSource(_audioAsset));
+      setState(() {
+        _audioReady = true;
+      });
+    } catch (_) {
+      setState(() {
+        _audioReady = false;
+      });
+    }
   }
 
   Future<void> _loadGuide() async {
@@ -75,16 +94,34 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
             Text(strings.noGuide),
           const SizedBox(height: 16),
           ElevatedButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(strings.audioMissing)),
-              );
+            onPressed: () async {
+              if (!_audioReady) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(strings.audioMissing)),
+                );
+                return;
+              }
+              if (_isPlaying) {
+                await _player.pause();
+              } else {
+                await _player.resume();
+              }
+              if (!mounted) return;
+              setState(() {
+                _isPlaying = !_isPlaying;
+              });
             },
-            icon: const Icon(Icons.play_arrow),
+            icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow),
             label: Text(strings.playAudio),
           ),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
   }
 }
