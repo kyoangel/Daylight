@@ -54,6 +54,18 @@ void main() {
     expect(loaded.toneStyle, 'encourage');
   });
 
+  test('UserProfileViewModel updates language', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repository = UserProfileRepository();
+    final viewModel = UserProfileViewModel(repository: repository);
+
+    await viewModel.updateLanguage('en');
+    expect(viewModel.state.language, 'en');
+
+    final loaded = await repository.load();
+    expect(loaded.language, 'en');
+  });
+
   test('UserProfileModel initial defaults', () {
     final profile = UserProfileModel.initial();
     expect(profile.nickname, '');
