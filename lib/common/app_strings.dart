@@ -10,7 +10,7 @@ class AppStrings {
   String get appTitle => isEnglish ? 'Daylight' : '一日之光';
   String get navDaily => isEnglish ? 'Daily' : '日常';
   String get navCompanion => isEnglish ? 'Companion' : '陪伴';
-  String get navDiary => isEnglish ? 'Diary' : '日記';
+  String get navDiary => isEnglish ? 'Mindfulness' : '正念引導';
   String get navProfile => isEnglish ? 'Me' : '我';
 
   String get profileTitle => isEnglish ? 'Profile' : '個人';
@@ -23,6 +23,7 @@ class AppStrings {
   String get triggersLabel => isEnglish ? 'Triggers (multi-select)' : '觸發源（多選）';
   String get moodBaselineLabel => isEnglish ? 'Mood baseline' : '心情基準';
   String get toneLabel => isEnglish ? 'Support tone' : '陪伴語氣';
+  String get languageToggleLabel => isEnglish ? 'App language' : '語言切換';
 
   String get onboardingWelcome => isEnglish ? 'Welcome' : '歡迎';
   String get onboardingWelcomeBody => isEnglish
@@ -95,7 +96,7 @@ class AppStrings {
       ? 'Weekly average ${avg.toStringAsFixed(1)}, high $max, low $min.'
       : '本週平均心情 ${avg.toStringAsFixed(1)}，最高 $max，最低 $min。';
 
-  String get diaryTitle => isEnglish ? 'Mood Diary' : '情緒日記';
+  String get diaryTitle => isEnglish ? 'Mindfulness' : '正念引導';
   String get weeklyDistribution => isEnglish ? 'Weekly Mood Distribution' : '本週心情分佈';
   String get moodSelect => isEnglish ? 'Mood' : '心情選擇';
   String get diaryTemplate => isEnglish ? 'Template' : '日記模板';

@@ -35,6 +35,11 @@ class UserProfileViewModel extends StateNotifier<UserProfileModel> {
     state = state.copyWith(toneStyle: toneStyle);
     await _repository.save(state);
   }
+
+  Future<void> updateLanguage(String language) async {
+    state = state.copyWith(language: language);
+    await _repository.save(state);
+  }
 }
 
 final userProfileViewModelProvider = StateNotifierProvider<UserProfileViewModel, UserProfileModel>(

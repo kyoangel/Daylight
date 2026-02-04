@@ -113,6 +113,25 @@ class ProfilePage extends ConsumerWidget {
               },
             ),
             const SizedBox(height: 32),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(strings.languageToggleLabel,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            ),
+            const SizedBox(height: 12),
+            DropdownButton<String>(
+              value: profile.language,
+              isExpanded: true,
+              items: [
+                DropdownMenuItem(value: 'zh-TW', child: Text(strings.languageOptionLabel('zh-TW'))),
+                DropdownMenuItem(value: 'en', child: Text(strings.languageOptionLabel('en'))),
+              ],
+              onChanged: (value) {
+                if (value == null) return;
+                vm.updateLanguage(value);
+              },
+            ),
+            const SizedBox(height: 32),
             // 其他設定可擴充...
           ],
         ),
