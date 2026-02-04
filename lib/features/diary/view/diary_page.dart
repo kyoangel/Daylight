@@ -23,7 +23,7 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
   final AudioPlayer _player = AudioPlayer();
   bool _isPlaying = false;
   bool _audioReady = false;
-  static const String _audioAsset = 'assets/audio/mindfulness.mp3';
+  static const String _audioAsset = 'audio/mindfulness.mp3';
 
   @override
   void initState() {
