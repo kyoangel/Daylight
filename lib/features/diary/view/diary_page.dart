@@ -71,10 +71,12 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
     return counts;
   }
 
-  String _buildWeeklySummary(Map<String, int> counts, AppStrings strings) {
+  String _buildWeeklySummary(Map<String, int> counts, AppStrings strings, String toneStyle) {
     if (counts.isEmpty) return '';
     final top = counts.entries.reduce((a, b) => a.value >= b.value ? a : b);
-    return strings.weeklyMoodSummary(strings.moodLabel(top.key), top.value);
+    final base = strings.weeklyMoodSummary(strings.moodLabel(top.key), top.value);
+    final closing = strings.weeklyClosingLine(toneStyle);
+    return '$base $closing';
   }
 
   @override
@@ -90,7 +92,7 @@ class _DiaryPageState extends ConsumerState<DiaryPage> {
       _contentRepository = ContentRepository(locale: locale);
       _loadGuide();
     }
-    final summary = _buildWeeklySummary(moodCounts, strings);
+    final summary = _buildWeeklySummary(moodCounts, strings, profile.toneStyle);
 
     return Scaffold(
       appBar: AppBar(title: Text(strings.diaryTitle)),

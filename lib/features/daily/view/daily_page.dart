@@ -149,7 +149,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     return false;
   }
 
-  String _buildWeeklySummary(List<DailyEntry> entries, AppStrings strings) {
+  String _buildWeeklySummary(List<DailyEntry> entries, AppStrings strings, String toneStyle) {
     if (entries.isEmpty) return '';
     final today = DateTime.now();
     final start = DateTime(today.year, today.month, today.day).subtract(const Duration(days: 6));
@@ -162,7 +162,9 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     final avg = scores.reduce((a, b) => a + b) / scores.length;
     final min = scores.reduce((a, b) => a < b ? a : b);
     final max = scores.reduce((a, b) => a > b ? a : b);
-    return strings.weeklySummary(avg, max, min);
+    final base = strings.weeklySummary(avg, max, min);
+    final closing = strings.weeklyClosingLine(toneStyle);
+    return '$base $closing';
   }
 
   @override
@@ -184,9 +186,9 @@ class _DailyPageState extends ConsumerState<DailyPage> {
       });
     }
 
-    final summary = _buildWeeklySummary(entries, strings);
     final nickname = profile.nickname.trim();
     final toneStyle = profile.toneStyle;
+    final summary = _buildWeeklySummary(entries, strings, toneStyle);
     final greeting = _welcomeMessage == null
         ? strings.welcomeFallbackGreeting
         : _personalize(_welcomeMessage!.greeting, nickname, locale);

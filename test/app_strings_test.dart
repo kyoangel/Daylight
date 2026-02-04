@@ -10,4 +10,12 @@ void main() {
     expect(strings.nightlyClosingBody('encourage'), strings.nightlyClosingBodyEncourage);
     expect(strings.nightlyClosingBody('short'), strings.nightlyClosingBodyShort);
   });
+
+  test('AppStrings weekly closing respects tone', () {
+    final strings = AppStrings.of('zh-TW');
+
+    expect(strings.weeklyClosingLine('gentle'), strings.weeklyClosingGentle);
+    expect(strings.weeklyClosingLine('encourage'), strings.weeklyClosingEncourage);
+    expect(strings.weeklyClosingLine('short'), strings.weeklyClosingShort);
+  });
 }

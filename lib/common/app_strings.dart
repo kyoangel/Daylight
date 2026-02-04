@@ -70,6 +70,11 @@ class AppStrings {
   String get nightlyClosingBodyEncourage =>
       isEnglish ? 'You showed up today. That matters.' : '今天你願意出現，就已經很重要了。';
   String get nightlyClosingBodyShort => isEnglish ? 'Rest well.' : '晚安，好好休息。';
+  String get weeklyClosingGentle =>
+      isEnglish ? 'Slow and steady is enough.' : '慢慢走就很好了。';
+  String get weeklyClosingEncourage =>
+      isEnglish ? 'You kept going this week.' : '這一週你一直在努力。';
+  String get weeklyClosingShort => isEnglish ? 'Keep it light.' : '保持輕盈就好。';
   String weeklySummary(double avg, int max, int min) => isEnglish
       ? 'Weekly average ${avg.toStringAsFixed(1)}, high $max, low $min.'
       : '本週平均心情 ${avg.toStringAsFixed(1)}，最高 $max，最低 $min。';
@@ -229,6 +234,17 @@ class AppStrings {
         return nightlyClosingBodyShort;
       default:
         return nightlyClosingBodyGentle;
+    }
+  }
+
+  String weeklyClosingLine(String tone) {
+    switch (tone) {
+      case 'encourage':
+        return weeklyClosingEncourage;
+      case 'short':
+        return weeklyClosingShort;
+      default:
+        return weeklyClosingGentle;
     }
   }
 
