@@ -118,6 +118,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     if (!mounted) return;
     _gratitudeController.clear();
     await _loadGratitude();
+    await _refreshContentByMood();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(strings.gratitudeSaved)),
     );
@@ -135,12 +136,24 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     setState(() {
       _loadingContent = true;
     });
-    final pickedAffirmation = await _pickAffirmationForToday();
+    final currentId = _affirmation?.id;
+    final pickedAffirmation = await _pickNewAffirmation(avoidId: currentId);
     if (!mounted) return;
     setState(() {
       _affirmation = pickedAffirmation;
       _loadingContent = false;
     });
+  }
+
+  Future<Affirmation?> _pickNewAffirmation({String? avoidId}) async {
+    Affirmation? picked;
+    for (var i = 0; i < 3; i++) {
+      picked = await _pickAffirmationForToday();
+      if (picked == null || picked.id != avoidId) {
+        return picked;
+      }
+    }
+    return picked;
   }
 
   Future<Affirmation?> _pickAffirmationForToday() async {
