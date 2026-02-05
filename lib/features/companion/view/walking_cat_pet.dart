@@ -46,7 +46,7 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
       CurvedAnimation(parent: _waddleController, curve: Curves.easeInOut),
     );
 
-    _bounceAnimation = Tween<double>(begin: 0, end: -4).animate(
+    _bounceAnimation = Tween<double>(begin: 0, end: -2).animate(
       CurvedAnimation(parent: _waddleController, curve: Curves.easeOut),
     );
 
@@ -85,10 +85,11 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
   }
 
   void _updateFrame() {
-    // Cycle frames 0, 1, 2, 3 based on time
+    // Cycle frames with a softer walk cadence.
     final now = DateTime.now().millisecondsSinceEpoch;
     setState(() {
-      _currentFrame = (now ~/ 150) % 4;
+      const frameOrder = [0, 1, 2, 1];
+      _currentFrame = frameOrder[(now ~/ 140) % frameOrder.length];
     });
   }
 
@@ -195,12 +196,12 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
                 child: Transform(
                   alignment: Alignment.center,
                   transform: Matrix4.identity()
-                    ..scale(_direction == 1 ? -1.0 : 1.0, 1.0),
-                child: CustomPaint(
-                  size: const Size(80, 80),
-                  painter: _SpritePainter(_spriteImage!, _currentFrame),
+                    ..scale(_direction == 1 ? 1.0 : -1.0, 1.0),
+                  child: CustomPaint(
+                    size: const Size(80, 80),
+                    painter: _SpritePainter(_spriteImage!, _currentFrame),
+                  ),
                 ),
-              ),
             ),
           );
           },
