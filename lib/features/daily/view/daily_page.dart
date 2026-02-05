@@ -21,7 +21,6 @@ class DailyPage extends ConsumerStatefulWidget {
 
 class _DailyPageState extends ConsumerState<DailyPage> {
   double _moodScore = 5;
-  final TextEditingController _reflectionController = TextEditingController();
   ContentRepository _contentRepository = ContentRepository(locale: 'zh-TW');
   String _currentLocale = 'zh-TW';
   Affirmation? _affirmation;
@@ -45,7 +44,6 @@ class _DailyPageState extends ConsumerState<DailyPage> {
 
   @override
   void dispose() {
-    _reflectionController.dispose();
     super.dispose();
   }
 
@@ -99,6 +97,45 @@ class _DailyPageState extends ConsumerState<DailyPage> {
       _microTaskDone = false;
       _loadingContent = false;
     });
+  }
+
+  Future<void> _saveQuickEntry({
+    required int moodScore,
+    required DailyViewModel vm,
+    required AppStrings strings,
+    required String toneStyle,
+  }) async {
+    final entry = DailyEntry(
+      date: DateTime.now(),
+      moodScore: moodScore,
+      microTaskId: _microTask?.id ?? 'default',
+      microTaskDone: _microTaskDone,
+      affirmationId: _affirmation?.id ?? 'default',
+      nightReflection: '',
+    );
+    await vm.upsertEntry(entry);
+    if (!mounted) return;
+    final response = strings.responseSavedLine(toneStyle);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(response)),
+    );
+    final closingBody = strings.nightlyClosingBody(toneStyle);
+    if (!mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(strings.nightlyClosingTitle),
+          content: Text(closingBody),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(strings.close),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   List<String> _tagsForMood(int mood) {
@@ -273,18 +310,59 @@ class _DailyPageState extends ConsumerState<DailyPage> {
           ],
           const SizedBox(height: 16),
           Text(strings.todayMood, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          Slider(
-            value: _moodScore,
-            min: 0,
-            max: 10,
-            divisions: 10,
-            label: _moodScore.toStringAsFixed(0),
-            onChanged: (value) {
-              setState(() {
-                _moodScore = value;
-              });
-              _refreshContentByMood();
-            },
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                key: const Key('mood_low'),
+                onPressed: () async {
+                  setState(() {
+                    _moodScore = 3;
+                  });
+                  await _refreshContentByMood();
+                  await _saveQuickEntry(
+                    moodScore: 3,
+                    vm: vm,
+                    strings: strings,
+                    toneStyle: toneStyle,
+                  );
+                },
+                child: const Text(':( ', style: TextStyle(fontSize: 20)),
+              ),
+              ElevatedButton(
+                key: const Key('mood_mid'),
+                onPressed: () async {
+                  setState(() {
+                    _moodScore = 6;
+                  });
+                  await _refreshContentByMood();
+                  await _saveQuickEntry(
+                    moodScore: 6,
+                    vm: vm,
+                    strings: strings,
+                    toneStyle: toneStyle,
+                  );
+                },
+                child: const Text(':|', style: TextStyle(fontSize: 20)),
+              ),
+              ElevatedButton(
+                key: const Key('mood_high'),
+                onPressed: () async {
+                  setState(() {
+                    _moodScore = 9;
+                  });
+                  await _refreshContentByMood();
+                  await _saveQuickEntry(
+                    moodScore: 9,
+                    vm: vm,
+                    strings: strings,
+                    toneStyle: toneStyle,
+                  );
+                },
+                child: const Text(':)', style: TextStyle(fontSize: 20)),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           Text(strings.todayTask, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -332,51 +410,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
           const SizedBox(height: 12),
           Text(strings.nightReflection, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          TextField(
-            controller: _reflectionController,
-            maxLines: 4,
-            decoration: InputDecoration(
-              hintText: strings.reflectionHint,
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () async {
-              final entry = DailyEntry(
-                date: DateTime.now(),
-                moodScore: _moodScore.round(),
-                microTaskId: _microTask?.id ?? 'default',
-                microTaskDone: _microTaskDone,
-                affirmationId: _affirmation?.id ?? 'default',
-                nightReflection: _reflectionController.text.trim(),
-              );
-              await vm.upsertEntry(entry);
-              if (!mounted) return;
-              final response = strings.responseSavedLine(toneStyle);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(response)),
-              );
-              final closingBody = strings.nightlyClosingBody(toneStyle);
-              if (!mounted) return;
-              await showDialog<void>(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text(strings.nightlyClosingTitle),
-                    content: Text(closingBody),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: Text(strings.close),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            child: Text(strings.saveToday),
-          ),
+          Text(strings.reflectionHint, style: const TextStyle(color: Colors.black54)),
         ],
       ),
     );

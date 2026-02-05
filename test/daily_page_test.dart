@@ -17,7 +17,8 @@ void main() {
     );
 
     final strings = AppStrings.of('zh-TW');
-    expect(find.text(strings.saveToday), findsOneWidget);
-    expect(find.byType(Slider), findsOneWidget);
+    expect(find.byKey(const Key('mood_low')), findsOneWidget);
+    expect(find.byKey(const Key('mood_mid')), findsOneWidget);
+    expect(find.byKey(const Key('mood_high')), findsOneWidget);
   });
 }
