@@ -6,18 +6,56 @@ import '../../../core/theme/theme_model.dart';
 import '../../../common/app_strings.dart';
 import '../../../common/locale_provider.dart';
 
-class ProfilePage extends ConsumerWidget {
+class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends ConsumerState<ProfilePage> {
+  late final TextEditingController _nicknameController;
+  late final FocusNode _nicknameFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    final profile = ref.read(userProfileViewModelProvider);
+    _nicknameController = TextEditingController(text: profile.nickname);
+    _nicknameFocusNode = FocusNode();
+    _nicknameFocusNode.addListener(_handleNicknameFocusChange);
+  }
+
+  @override
+  void dispose() {
+    _nicknameFocusNode.removeListener(_handleNicknameFocusChange);
+    _nicknameFocusNode.dispose();
+    _nicknameController.dispose();
+    super.dispose();
+  }
+
+  void _handleNicknameFocusChange() {
+    if (_nicknameFocusNode.hasFocus) return;
+    final vm = ref.read(userProfileViewModelProvider.notifier);
+    final current = ref.read(userProfileViewModelProvider).nickname;
+    final next = _nicknameController.text.trim();
+    if (next.isNotEmpty && next != current) {
+      vm.updateNickname(next);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final profile = ref.watch(userProfileViewModelProvider);
     final vm = ref.read(userProfileViewModelProvider.notifier);
     final themeNotifier = ref.read(themeNotifierProvider.notifier);
     final appTheme = ref.watch(themeNotifierProvider);
     final locale = ref.watch(localeProvider);
     final strings = AppStrings.of(locale);
-    final TextEditingController nicknameController = TextEditingController(text: profile.nickname);
+    if (_nicknameController.text != profile.nickname &&
+        !_nicknameFocusNode.hasFocus) {
+      _nicknameController.text = profile.nickname;
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -39,7 +77,10 @@ class ProfilePage extends ConsumerWidget {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: nicknameController,
+                    controller: _nicknameController,
+                    focusNode: _nicknameFocusNode,
+                    textInputAction: TextInputAction.done,
+                    onEditingComplete: () => _nicknameFocusNode.unfocus(),
                     decoration: InputDecoration(
                       labelText: strings.nicknameLabel,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
@@ -47,18 +88,6 @@ class ProfilePage extends ConsumerWidget {
                       fillColor: appTheme.color.withOpacity(0.08),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: appTheme.color,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
-                  onPressed: () {
-                    vm.updateNickname(nicknameController.text);
-                    FocusScope.of(context).unfocus();
-                  },
-                  child: Text(strings.save, style: const TextStyle(color: Colors.white)),
                 ),
               ],
             ),
