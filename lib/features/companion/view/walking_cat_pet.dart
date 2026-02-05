@@ -69,8 +69,8 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
   }
 
   void _updateFrameFromController() {
-    // Use only walk frames (0,1,2,1) to avoid the crouch frame during walking.
-    const frameOrder = [0, 1, 2, 1];
+    // Use all 4 walk frames (0, 1, 2, 3) from the new spritesheet.
+    const frameOrder = [0, 1, 2, 3];
     final int frame = frameOrder[(_waddleController.value * frameOrder.length).floor() % frameOrder.length];
     if (_currentFrame != frame) {
       setState(() {
@@ -119,7 +119,6 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
     if (_isJumping) return;
     setState(() {
       _isJumping = true;
-      _currentFrame = 3;
     });
     
     double peak = -60;
@@ -251,15 +250,23 @@ class _SpritePainter extends CustomPainter {
     final safeFrame = frame % totalFrames;
     final col = safeFrame % cols;
     final row = safeFrame ~/ cols;
-    
-    Rect src = Rect.fromLTWH(col * fw, row * fh, fw, fh);
+
+    // Avoid texture bleeding between frames by trimming 1px border.
+    const double inset = 1.0;
+    final srcX = col * fw + inset;
+    final srcY = row * fh + inset;
+    final srcW = fw - inset * 2;
+    final srcH = fh - inset * 2;
+    Rect src = Rect.fromLTWH(srcX, srcY, srcW, srcH);
     Rect dst = Rect.fromLTWH(0, 0, size.width, size.height);
     
     canvas.drawImageRect(
-      image, 
-      src, 
-      dst, 
-      Paint()..filterQuality = ui.FilterQuality.medium
+      image,
+      src,
+      dst,
+      Paint()
+        ..filterQuality = ui.FilterQuality.none
+        ..isAntiAlias = false,
     );
   }
 
