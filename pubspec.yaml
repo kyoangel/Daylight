@@ -81,7 +81,6 @@ flutter:
     - assets/icons/mood_low.svg
     - assets/icons/mood_mid.svg
     - assets/icons/mood_high.svg
-    - assets/icons/cute_cat_spritesheet.png
     - assets/content/en/welcome_messages.json
 
   # An image asset can refer to one or more resolution-specific "variants", see

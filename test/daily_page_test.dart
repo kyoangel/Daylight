@@ -20,5 +20,6 @@ void main() {
     expect(find.byKey(const Key('mood_low')), findsOneWidget);
     expect(find.byKey(const Key('mood_mid')), findsOneWidget);
     expect(find.byKey(const Key('mood_high')), findsOneWidget);
+    expect(find.text(strings.gratitudeTitle), findsOneWidget);
   });
 }

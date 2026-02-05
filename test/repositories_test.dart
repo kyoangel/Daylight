@@ -3,11 +3,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:daylight/data/models/daily_entry.dart';
 import 'package:daylight/data/models/diary_entry.dart';
+import 'package:daylight/data/models/gratitude_entry.dart';
 import 'package:daylight/data/models/onboarding_state.dart';
 import 'package:daylight/data/models/sos_contact.dart';
 import 'package:daylight/data/models/user_profile_model.dart';
 import 'package:daylight/data/repositories/daily_repository.dart';
 import 'package:daylight/data/repositories/diary_repository.dart';
+import 'package:daylight/data/repositories/gratitude_repository.dart';
 import 'package:daylight/data/repositories/onboarding_repository.dart';
 import 'package:daylight/data/repositories/sos_repository.dart';
 import 'package:daylight/data/repositories/user_profile_repository.dart';
@@ -85,6 +87,23 @@ void main() {
 
     expect(loaded.length, 1);
     expect(loaded.first.id, 'diary_1');
+  });
+
+  test('GratitudeRepository add', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repo = GratitudeRepository();
+
+    final entry = GratitudeEntry(
+      id: 'grat_1',
+      createdAt: DateTime(2026, 2, 5),
+      content: 'sunshine',
+    );
+
+    await repo.add(entry);
+    final loaded = await repo.loadAll();
+
+    expect(loaded.length, 1);
+    expect(loaded.first.content, 'sunshine');
   });
 
   test('SOSRepository save/load', () async {

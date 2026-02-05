@@ -7,7 +7,7 @@ import 'package:daylight/features/daily/view/daily_page.dart';
 import 'package:daylight/common/app_strings.dart';
 
 void main() {
-  testWidgets('DailyPage shows weekly trend section', (WidgetTester tester) async {
+  testWidgets('DailyPage hides weekly trend section', (WidgetTester tester) async {
     SharedPreferences.setMockInitialValues({});
 
     await tester.pumpWidget(
@@ -17,6 +17,6 @@ void main() {
     );
 
     final strings = AppStrings.of('zh-TW');
-    expect(find.text(strings.weeklyTrend), findsOneWidget);
+    expect(find.text(strings.weeklyTrend), findsNothing);
   });
 }

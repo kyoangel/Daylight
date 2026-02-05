@@ -46,6 +46,13 @@ class AppStrings {
   String get todayMood => isEnglish ? 'Today Mood' : '今日心情';
   String get todayTask => isEnglish ? 'Today Task' : '今日小任務';
   String get todayAffirmation => isEnglish ? "Today's Affirmation" : '今日肯定語';
+  String get gratitudeTitle => isEnglish ? 'Gratitude note' : '感恩小記';
+  String get gratitudeHint => isEnglish ? 'Write one small grateful thing...' : '寫下一件讓你感到感恩的小事...';
+  String get gratitudeSave => isEnglish ? 'Save gratitude' : '記錄感恩';
+  String get gratitudeEmpty => isEnglish ? 'No gratitude notes yet.' : '目前沒有感恩小記';
+  String get gratitudeSaved => isEnglish ? 'Saved.' : '已記錄感恩小記';
+  String get gratitudeViewAll => isEnglish ? 'View all' : '查看全部';
+  String get gratitudeAllTitle => isEnglish ? 'All gratitude notes' : '所有感恩小記';
   String get noTask => isEnglish ? 'No tasks yet' : '尚無任務內容';
   String get noAffirmation => isEnglish ? 'No affirmations yet' : '尚無肯定語';
   String get nightReflection => isEnglish ? 'Night Reflection' : '晚安反思';

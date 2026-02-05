@@ -11,6 +11,8 @@ import '../../../common/app_strings.dart';
 import '../../../common/locale_provider.dart';
 import '../service/welcome_service.dart';
 import '../../../data/content/models/welcome_message.dart';
+import '../../../data/models/gratitude_entry.dart';
+import '../../../data/repositories/gratitude_repository.dart';
 
 class DailyPage extends ConsumerStatefulWidget {
   const DailyPage({super.key});
@@ -29,6 +31,10 @@ class _DailyPageState extends ConsumerState<DailyPage> {
   bool _loadingWelcome = true;
   bool _pendingReload = false;
   final WelcomeService _welcomeService = WelcomeService();
+  final GratitudeRepository _gratitudeRepository = GratitudeRepository();
+  final TextEditingController _gratitudeController = TextEditingController();
+  List<GratitudeEntry> _gratitudeEntries = [];
+  bool _loadingGratitude = true;
 
   @override
   void initState() {
@@ -38,10 +44,12 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     _contentRepository = ContentRepository(locale: _currentLocale);
     _loadContent();
     _loadWelcome(locale: _currentLocale);
+    _loadGratitude();
   }
 
   @override
   void dispose() {
+    _gratitudeController.dispose();
     super.dispose();
   }
 
@@ -68,6 +76,37 @@ class _DailyPageState extends ConsumerState<DailyPage> {
       _welcomeMessage = message;
       _loadingWelcome = false;
     });
+  }
+
+  Future<void> _loadGratitude() async {
+    setState(() {
+      _loadingGratitude = true;
+    });
+    final items = await _gratitudeRepository.loadAll();
+    if (!mounted) return;
+    items.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    setState(() {
+      _gratitudeEntries = items;
+      _loadingGratitude = false;
+    });
+  }
+
+  Future<void> _saveGratitude(AppStrings strings) async {
+    final content = _gratitudeController.text.trim();
+    if (content.isEmpty) return;
+    final now = DateTime.now();
+    final entry = GratitudeEntry(
+      id: 'grat_${now.millisecondsSinceEpoch}',
+      createdAt: now,
+      content: content,
+    );
+    await _gratitudeRepository.add(entry);
+    if (!mounted) return;
+    _gratitudeController.clear();
+    await _loadGratitude();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(strings.gratitudeSaved)),
+    );
   }
 
   String _personalize(String template, String nickname, String locale) {
@@ -136,25 +175,6 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     return ['hope', 'gentle', 'refresh'];
   }
 
-  List<double> _buildWeeklyTrend(List<DailyEntry> entries) {
-    if (entries.isEmpty) return [];
-    final today = DateTime.now();
-    final start = DateTime(today.year, today.month, today.day).subtract(const Duration(days: 6));
-    final byDate = <String, DailyEntry>{};
-    for (final entry in entries) {
-      final key = '${entry.date.year}-${entry.date.month}-${entry.date.day}';
-      byDate[key] = entry;
-    }
-    final trend = <double>[];
-    for (var i = 0; i < 7; i++) {
-      final day = start.add(Duration(days: i));
-      final key = '${day.year}-${day.month}-${day.day}';
-      final value = byDate[key]?.moodScore.toDouble();
-      trend.add(value ?? 0);
-    }
-    return trend;
-  }
-
   bool _shouldShowSoftIntervention(List<DailyEntry> entries, DateTime now) {
     final today = DateTime(now.year, now.month, now.day);
     final recent = entries.where((entry) {
@@ -185,7 +205,6 @@ class _DailyPageState extends ConsumerState<DailyPage> {
   Widget build(BuildContext context) {
     final vm = ref.read(dailyViewModelProvider.notifier);
     final entries = ref.watch(dailyViewModelProvider);
-    final trend = _buildWeeklyTrend(entries);
     final profile = ref.watch(userProfileViewModelProvider);
     final locale = normalizeLocale(profile.language);
     final strings = AppStrings.of(ref.watch(localeProvider));
@@ -268,19 +287,6 @@ class _DailyPageState extends ConsumerState<DailyPage> {
             ),
             const SizedBox(height: 16),
           ],
-          Text(strings.weeklyTrend, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          if (trend.isEmpty)
-            Text(strings.noRecords)
-          else
-            SizedBox(
-              height: 140,
-              child: MoodTrendChart(
-                values: trend,
-                labels: [strings.moodScaleHigh, strings.moodScaleMid, strings.moodScaleLow],
-              ),
-            ),
-          const SizedBox(height: 16),
           Text(strings.todayMood, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Row(
@@ -350,6 +356,83 @@ class _DailyPageState extends ConsumerState<DailyPage> {
             )
           else
             Text(strings.noAffirmation),
+          const SizedBox(height: 16),
+          Text(strings.gratitudeTitle, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _gratitudeController,
+            maxLines: 3,
+            decoration: InputDecoration(
+              hintText: strings.gratitudeHint,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _loadingGratitude ? null : () => _saveGratitude(strings),
+              child: Text(strings.gratitudeSave),
+            ),
+          ),
+          const SizedBox(height: 8),
+          if (_loadingGratitude)
+            const LinearProgressIndicator()
+          else if (_gratitudeEntries.isEmpty)
+            Text(strings.gratitudeEmpty)
+          else ...[
+            ..._gratitudeEntries.take(3).map((entry) {
+              final dateLabel = '${entry.createdAt.month}/${entry.createdAt.day}';
+              return Card(
+                child: ListTile(
+                  title: Text(entry.content),
+                  trailing: Text(dateLabel, style: const TextStyle(color: Colors.black54)),
+                ),
+              );
+            }),
+            if (_gratitudeEntries.length > 3)
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      builder: (context) {
+                        return SafeArea(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Text(
+                                  strings.gratitudeAllTitle,
+                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              const Divider(height: 1),
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount: _gratitudeEntries.length,
+                                  itemBuilder: (context, index) {
+                                    final entry = _gratitudeEntries[index];
+                                    final dateLabel = '${entry.createdAt.month}/${entry.createdAt.day}';
+                                    return ListTile(
+                                      title: Text(entry.content),
+                                      trailing: Text(dateLabel,
+                                          style: const TextStyle(color: Colors.black54)),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: Text(strings.gratitudeViewAll),
+                ),
+              ),
+          ],
         ],
       ),
     );
@@ -380,81 +463,5 @@ class _MoodIconButton extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: SvgPicture.asset(asset),
     );
-  }
-}
-
-class MoodTrendChart extends StatelessWidget {
-  const MoodTrendChart({super.key, required this.values, required this.labels});
-
-  final List<double> values;
-  final List<String> labels;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 28,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(labels[0], style: const TextStyle(color: Colors.black54, fontSize: 12)),
-              Text(labels[1], style: const TextStyle(color: Colors.black54, fontSize: 12)),
-              Text(labels[2], style: const TextStyle(color: Colors.black54, fontSize: 12)),
-            ],
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: CustomPaint(
-            painter: _MoodTrendPainter(values: values),
-            child: Container(),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _MoodTrendPainter extends CustomPainter {
-  _MoodTrendPainter({required this.values});
-
-  final List<double> values;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (values.isEmpty) return;
-    final guidePaint = Paint()
-      ..color = Colors.black12
-      ..strokeWidth = 1;
-    final linePaint = Paint()
-      ..color = Colors.teal
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-
-    const guidePositions = [0.2, 0.5, 0.8];
-    for (final position in guidePositions) {
-      final y = size.height * position;
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), guidePaint);
-    }
-
-    final path = Path();
-    final stepX = values.length > 1 ? size.width / (values.length - 1) : size.width;
-    for (var i = 0; i < values.length; i++) {
-      final x = stepX * i;
-      final normalized = (values[i] / 10).clamp(0, 1);
-      final y = size.height - (size.height * normalized);
-      if (i == 0) {
-        path.moveTo(x, y);
-      } else {
-        path.lineTo(x, y);
-      }
-    }
-    canvas.drawPath(path, linePaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _MoodTrendPainter oldDelegate) {
-    return oldDelegate.values != values;
   }
 }
