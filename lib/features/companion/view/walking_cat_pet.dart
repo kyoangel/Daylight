@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class WalkingCatPet extends StatefulWidget {
   const WalkingCatPet({super.key});
@@ -9,34 +11,76 @@ class WalkingCatPet extends StatefulWidget {
   State<WalkingCatPet> createState() => _WalkingCatPetState();
 }
 
-class _WalkingCatPetState extends State<WalkingCatPet> with SingleTickerProviderStateMixin {
+class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateMixin {
   double _x = 100;
   double _y = 200;
-  double _direction = 1; // 1 for right, -1 for left
+  double _direction = 1;
   bool _isJumping = false;
   double _jumpYOffset = 0;
-  final double _speed = 50.0; // pixels per second
+  final double _speed = 65.0;
   final double _padding = 20.0;
   
   late Timer _timer;
   Timer? _jumpTimer;
-  late AnimationController _bobController;
+  late AnimationController _waddleController;
+  late Animation<double> _tiltAnimation;
+  late Animation<double> _bounceAnimation;
+  
+  // Sprite state
+  ui.Image? _spriteImage;
+  int _currentFrame = 0;
+  bool _spriteFailed = false;
   DateTime? _lastTick;
 
   @override
   void initState() {
     super.initState();
-    _bobController = AnimationController(
+    _loadSprite();
+    
+    _waddleController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 250),
     )..repeat(reverse: true);
+
+    _tiltAnimation = Tween<double>(begin: -0.06, end: 0.06).animate(
+      CurvedAnimation(parent: _waddleController, curve: Curves.easeInOut),
+    );
+
+    _bounceAnimation = Tween<double>(begin: 0, end: -4).animate(
+      CurvedAnimation(parent: _waddleController, curve: Curves.easeOut),
+    );
 
     _timer = Timer.periodic(const Duration(milliseconds: 32), (timer) {
       _updatePosition();
+      _updateFrame();
     });
 
-    // Randomly jump
     _scheduleNextJump();
+  }
+
+  Future<void> _loadSprite() async {
+    try {
+      final ByteData data = await rootBundle.load('assets/icons/cute_cat_spritesheet.png');
+      final ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
+      final ui.FrameInfo fi = await codec.getNextFrame();
+      if (!mounted) return;
+      setState(() {
+        _spriteImage = fi.image;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _spriteFailed = true;
+      });
+    }
+  }
+
+  void _updateFrame() {
+    // Cycle frames 0, 1, 2, 3 based on time
+    final now = DateTime.now().millisecondsSinceEpoch;
+    setState(() {
+      _currentFrame = (now ~/ 150) % 4;
+    });
   }
 
   void _scheduleNextJump() {
@@ -53,9 +97,7 @@ class _WalkingCatPetState extends State<WalkingCatPet> with SingleTickerProvider
     if (_isJumping) return;
     setState(() => _isJumping = true);
     
-    // Jump animation logic
-    double startY = 0;
-    double peak = -40;
+    double peak = -60;
     int durationMs = 800;
     int steps = 25;
     int currentStep = 0;
@@ -67,8 +109,7 @@ class _WalkingCatPetState extends State<WalkingCatPet> with SingleTickerProvider
       }
       
       currentStep++;
-      double t = currentStep / steps; // 0.0 to 1.0
-      // Parabolic jump: y = 4 * peak * t * (1 - t)
+      double t = currentStep / steps;
       setState(() {
         _jumpYOffset = 4 * peak * t * (1 - t);
       });
@@ -96,16 +137,12 @@ class _WalkingCatPetState extends State<WalkingCatPet> with SingleTickerProvider
     _lastTick = now;
 
     setState(() {
-      final screenWidth = MediaQuery.of(context).size.width;
-      
-      // Keep it on a "line" - let's say bottom of the screen above the input
-      _y = MediaQuery.of(context).size.height - 180;
-
+      final size = MediaQuery.of(context).size;
+      _y = size.height - 180;
       _x += _direction * _speed * dt;
 
-      // Boundary check
-      if (_x > screenWidth - _padding - 60) {
-        _x = screenWidth - _padding - 60;
+      if (_x > size.width - _padding - 80) {
+        _x = size.width - _padding - 80;
         _direction = -1;
       } else if (_x < _padding) {
         _x = _padding;
@@ -118,36 +155,80 @@ class _WalkingCatPetState extends State<WalkingCatPet> with SingleTickerProvider
   void dispose() {
     _timer.cancel();
     _jumpTimer?.cancel();
-    _bobController.dispose();
+    _waddleController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_spriteImage == null && !_spriteFailed) {
+      return const SizedBox.shrink();
+    }
+
     return Positioned(
       left: _x,
       top: _y + _jumpYOffset,
       child: IgnorePointer(
         child: AnimatedBuilder(
-          animation: _bobController,
+          animation: _waddleController,
           builder: (context, child) {
-            double bobY = _isJumping ? 0 : _bobController.value * -4;
+            double stepBounce = _isJumping ? 0 : _bounceAnimation.value;
+            double tilt = _isJumping ? 0 : _tiltAnimation.value;
+            
             return Transform.translate(
-              offset: Offset(0, bobY),
-              child: Transform(
-                alignment: Alignment.center,
-                transform: Matrix4.identity()
-                  ..scale(_direction == 1 ? -1.0 : 1.0, 1.0), // Flip based on direction
-                child: Image.asset(
-                  'assets/icons/cute_cat_pet.png',
-                  width: 60,
-                  height: 60,
-                ),
+              offset: Offset(0, stepBounce),
+              child: Transform.rotate(
+                angle: tilt,
+                alignment: Alignment.bottomCenter,
+                child: Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.identity()
+                    ..scale(_direction == 1 ? -1.0 : 1.0, 1.0),
+                child: _spriteImage == null
+                    ? Image.asset(
+                        'assets/icons/cute_cat_pet.png',
+                        width: 60,
+                        height: 60,
+                      )
+                    : CustomPaint(
+                        size: const Size(80, 80),
+                        painter: _SpritePainter(_spriteImage!, _currentFrame),
+                      ),
               ),
-            );
+            ),
+          );
           },
         ),
       ),
     );
   }
+}
+
+class _SpritePainter extends CustomPainter {
+  final ui.Image image;
+  final int frame;
+  _SpritePainter(this.image, this.frame);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Assuming 2x2 grid for the generated spritesheet
+    double fw = image.width / 2;
+    double fh = image.height / 2;
+    int col = frame % 2;
+    int row = frame ~/ 2;
+    
+    Rect src = Rect.fromLTWH(col * fw, row * fh, fw, fh);
+    Rect dst = Rect.fromLTWH(0, 0, size.width, size.height);
+    
+    canvas.drawImageRect(
+      image, 
+      src, 
+      dst, 
+      Paint()..filterQuality = ui.FilterQuality.medium
+    );
+  }
+
+  @override
+  bool shouldRepaint(_SpritePainter oldDelegate) => 
+    oldDelegate.frame != frame || oldDelegate.image != image;
 }
