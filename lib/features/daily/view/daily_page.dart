@@ -181,24 +181,6 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     return false;
   }
 
-  String _buildWeeklySummary(List<DailyEntry> entries, AppStrings strings, String toneStyle) {
-    if (entries.isEmpty) return '';
-    final today = DateTime.now();
-    final start = DateTime(today.year, today.month, today.day).subtract(const Duration(days: 6));
-    final recent = entries.where((entry) {
-      final day = DateTime(entry.date.year, entry.date.month, entry.date.day);
-      return !day.isBefore(start);
-    }).toList();
-    if (recent.isEmpty) return '';
-    final scores = recent.map((e) => e.moodScore).toList();
-    final avg = scores.reduce((a, b) => a + b) / scores.length;
-    final min = scores.reduce((a, b) => a < b ? a : b);
-    final max = scores.reduce((a, b) => a > b ? a : b);
-    final base = strings.weeklySummary(avg, max, min);
-    final closing = strings.weeklyClosingLine(toneStyle);
-    return '$base $closing';
-  }
-
   @override
   Widget build(BuildContext context) {
     final vm = ref.read(dailyViewModelProvider.notifier);
@@ -220,7 +202,6 @@ class _DailyPageState extends ConsumerState<DailyPage> {
 
     final nickname = profile.nickname.trim();
     final toneStyle = profile.toneStyle;
-    final summary = _buildWeeklySummary(entries, strings, toneStyle);
     final greeting = _welcomeMessage == null
         ? strings.welcomeFallbackGreeting
         : _personalize(_welcomeMessage!.greeting, nickname, locale);
@@ -294,12 +275,11 @@ class _DailyPageState extends ConsumerState<DailyPage> {
           else
             SizedBox(
               height: 140,
-              child: MoodTrendChart(values: trend),
+              child: MoodTrendChart(
+                values: trend,
+                labels: [strings.moodScaleHigh, strings.moodScaleMid, strings.moodScaleLow],
+              ),
             ),
-          if (summary.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text(summary, style: const TextStyle(color: Colors.black54)),
-          ],
           const SizedBox(height: 16),
           Text(strings.todayMood, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
@@ -404,15 +384,34 @@ class _MoodIconButton extends StatelessWidget {
 }
 
 class MoodTrendChart extends StatelessWidget {
-  const MoodTrendChart({super.key, required this.values});
+  const MoodTrendChart({super.key, required this.values, required this.labels});
 
   final List<double> values;
+  final List<String> labels;
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _MoodTrendPainter(values: values),
-      child: Container(),
+    return Row(
+      children: [
+        SizedBox(
+          width: 28,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(labels[0], style: const TextStyle(color: Colors.black54, fontSize: 12)),
+              Text(labels[1], style: const TextStyle(color: Colors.black54, fontSize: 12)),
+              Text(labels[2], style: const TextStyle(color: Colors.black54, fontSize: 12)),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: CustomPaint(
+            painter: _MoodTrendPainter(values: values),
+            child: Container(),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -425,10 +424,19 @@ class _MoodTrendPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (values.isEmpty) return;
-    final paint = Paint()
+    final guidePaint = Paint()
+      ..color = Colors.black12
+      ..strokeWidth = 1;
+    final linePaint = Paint()
       ..color = Colors.teal
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
+
+    const guidePositions = [0.2, 0.5, 0.8];
+    for (final position in guidePositions) {
+      final y = size.height * position;
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), guidePaint);
+    }
 
     final path = Path();
     final stepX = values.length > 1 ? size.width / (values.length - 1) : size.width;
@@ -442,7 +450,7 @@ class _MoodTrendPainter extends CustomPainter {
         path.lineTo(x, y);
       }
     }
-    canvas.drawPath(path, paint);
+    canvas.drawPath(path, linePaint);
   }
 
   @override

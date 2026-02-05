@@ -96,6 +96,10 @@ class AppStrings {
       ? 'Weekly average ${avg.toStringAsFixed(1)}, high $max, low $min.'
       : '本週平均心情 ${avg.toStringAsFixed(1)}，最高 $max，最低 $min。';
 
+  String get moodScaleHigh => isEnglish ? 'High' : '高';
+  String get moodScaleMid => isEnglish ? 'Mid' : '中';
+  String get moodScaleLow => isEnglish ? 'Low' : '低';
+
   String get diaryTitle => isEnglish ? 'Mindfulness' : '正念引導';
   String get weeklyDistribution => isEnglish ? 'Weekly Mood Distribution' : '本週心情分佈';
   String get moodSelect => isEnglish ? 'Mood' : '心情選擇';
