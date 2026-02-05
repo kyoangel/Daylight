@@ -8,7 +8,6 @@ import '../../../features/profile/viewmodel/profile_viewmodel.dart';
 import '../../../common/app_locale.dart';
 import '../../../common/app_strings.dart';
 import '../../../common/locale_provider.dart';
-import 'walking_cat_pet.dart';
 
 class CompanionPage extends ConsumerStatefulWidget {
   const CompanionPage({super.key});
@@ -171,7 +170,6 @@ class _CompanionPageState extends ConsumerState<CompanionPage> {
               ),
             ],
           ),
-          const WalkingCatPet(),
         ],
       ),
     );
