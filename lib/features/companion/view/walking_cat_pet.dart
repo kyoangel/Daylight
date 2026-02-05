@@ -39,23 +39,44 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
     // Sprite load happens after dependencies are ready.
     _waddleController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 250),
-    )..repeat(reverse: true);
+      duration: const Duration(milliseconds: 800), // Slower cycle for more relaxed walk
+    )..repeat();
 
-    _tiltAnimation = Tween<double>(begin: -0.06, end: 0.06).animate(
-      CurvedAnimation(parent: _waddleController, curve: Curves.easeInOut),
-    );
+    // Tilt: Extremely subtle side-to-side shift
+    _tiltAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 0.03).chain(CurveTween(curve: Curves.easeInOut)), weight: 25),
+      TweenSequenceItem(tween: Tween(begin: 0.03, end: 0.0).chain(CurveTween(curve: Curves.easeInOut)), weight: 25),
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: -0.03).chain(CurveTween(curve: Curves.easeInOut)), weight: 25),
+      TweenSequenceItem(tween: Tween(begin: -0.03, end: 0.0).chain(CurveTween(curve: Curves.easeInOut)), weight: 25),
+    ]).animate(_waddleController);
 
-    _bounceAnimation = Tween<double>(begin: 0, end: -2).animate(
-      CurvedAnimation(parent: _waddleController, curve: Curves.easeOut),
-    );
+    // Bounce: Very minimal vertical movement to simulate weight shift, not jumping
+    _bounceAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: -1.5).chain(CurveTween(curve: Curves.easeInOut)), weight: 25),
+      TweenSequenceItem(tween: Tween(begin: -1.5, end: 0.0).chain(CurveTween(curve: Curves.easeInOut)), weight: 25),
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: -1.5).chain(CurveTween(curve: Curves.easeInOut)), weight: 25),
+      TweenSequenceItem(tween: Tween(begin: -1.5, end: 0.0).chain(CurveTween(curve: Curves.easeInOut)), weight: 25),
+    ]).animate(_waddleController);
 
     _timer = Timer.periodic(const Duration(milliseconds: 32), (timer) {
       _updatePosition();
-      _updateFrame();
+      if (!_isJumping) {
+        _updateFrameFromController();
+      }
     });
 
     _scheduleNextJump();
+  }
+
+  void _updateFrameFromController() {
+    // Use only walk frames (0,1,2,1) to avoid the crouch frame during walking.
+    const frameOrder = [0, 1, 2, 1];
+    final int frame = frameOrder[(_waddleController.value * frameOrder.length).floor() % frameOrder.length];
+    if (_currentFrame != frame) {
+      setState(() {
+        _currentFrame = frame;
+      });
+    }
   }
 
   @override
@@ -84,15 +105,6 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
     stream.addListener(_spriteListener!);
   }
 
-  void _updateFrame() {
-    // Cycle frames with a softer walk cadence.
-    final now = DateTime.now().millisecondsSinceEpoch;
-    setState(() {
-      const frameOrder = [0, 1, 2, 1];
-      _currentFrame = frameOrder[(now ~/ 140) % frameOrder.length];
-    });
-  }
-
   void _scheduleNextJump() {
     _jumpTimer?.cancel();
     _jumpTimer = Timer(Duration(seconds: 5 + Random().nextInt(10)), () {
@@ -105,7 +117,10 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
 
   void _triggerJump() {
     if (_isJumping) return;
-    setState(() => _isJumping = true);
+    setState(() {
+      _isJumping = true;
+      _currentFrame = 3;
+    });
     
     double peak = -60;
     int durationMs = 800;
