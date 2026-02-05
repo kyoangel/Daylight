@@ -1,3 +1,4 @@
+import 'dart:math';
 import '../../../data/content/content_repository.dart';
 import '../../../data/content/models/welcome_message.dart';
 import '../../../data/data_keys.dart';
@@ -8,11 +9,14 @@ class WelcomeService {
   WelcomeService({
     ContentRepository? contentRepository,
     LocalStorage? storage,
+    Random? random,
   })  : _contentRepository = contentRepository,
-        _storage = storage ?? LocalStorage();
+        _storage = storage ?? LocalStorage(),
+        _random = random ?? Random();
 
   final ContentRepository? _contentRepository;
   final LocalStorage _storage;
+  final Random _random;
 
   Future<WelcomeMessage?> getTodayMessage({
     required String locale,
@@ -20,34 +24,25 @@ class WelcomeService {
   }) async {
     final today = now ?? DateTime.now();
     final dateKey = _formatDate(today);
-    final saved = await _loadState();
 
     final repository = _contentRepository ?? ContentRepository(locale: locale);
     final messages = await repository.loadWelcomeMessages();
     if (messages.isEmpty) return null;
 
-    if (saved != null && saved.date == dateKey && saved.locale == locale) {
-      final match = messages.where((m) => m.id == saved.messageId).toList();
-      if (match.isNotEmpty) {
-        return match.first;
-      }
-    }
-
-    final picked = _pickByDay(messages, today);
+    final recentIds = await _storage.readStringList(DataKeys.welcomeRecent);
+    final picked = _pickWithHistory(messages, recentIds);
     await _saveState(
       WelcomeState(date: dateKey, messageId: picked.id, locale: locale),
     );
+    await _saveRecent(picked.id, recentIds);
     return picked;
   }
 
-  WelcomeMessage _pickByDay(List<WelcomeMessage> messages, DateTime date) {
-    final index = _dayOfYear(date) % messages.length;
-    return messages[index];
-  }
-
-  int _dayOfYear(DateTime date) {
-    final start = DateTime(date.year, 1, 1);
-    return date.difference(start).inDays;
+  WelcomeMessage _pickWithHistory(List<WelcomeMessage> messages, List<String> recentIds) {
+    if (messages.length <= 1) return messages.first;
+    final filtered = messages.where((m) => !recentIds.contains(m.id)).toList();
+    final pool = filtered.isNotEmpty ? filtered : messages;
+    return pool[_random.nextInt(pool.length)];
   }
 
   String _formatDate(DateTime date) {
@@ -57,13 +52,12 @@ class WelcomeService {
     return '$year-$month-$day';
   }
 
-  Future<WelcomeState?> _loadState() async {
-    final json = await _storage.readJson(DataKeys.welcomeState);
-    if (json == null) return null;
-    return WelcomeState.fromJson(json);
-  }
-
   Future<void> _saveState(WelcomeState state) async {
     await _storage.writeJson(DataKeys.welcomeState, state.toJson());
+  }
+
+  Future<void> _saveRecent(String id, List<String> recentIds) async {
+    final next = <String>[id, ...recentIds.where((e) => e != id)];
+    await _storage.writeStringList(DataKeys.welcomeRecent, next.take(5).toList());
   }
 }

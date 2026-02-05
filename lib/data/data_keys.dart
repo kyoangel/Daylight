@@ -8,4 +8,5 @@ class DataKeys {
   static const sosContacts = 'sos_contacts';
   static const dataVersion = 'data_version';
   static const welcomeState = 'welcome_state';
+  static const welcomeRecent = 'welcome_recent';
 }

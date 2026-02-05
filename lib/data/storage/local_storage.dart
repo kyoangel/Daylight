@@ -37,4 +37,14 @@ class LocalStorage {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(key);
   }
+
+  Future<void> writeStringList(String key, List<String> values) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(key, values);
+  }
+
+  Future<List<String>> readStringList(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList(key) ?? [];
+  }
 }
