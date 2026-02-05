@@ -31,16 +31,12 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
   DateTime? _lastTick;
   ImageStream? _spriteStream;
   ImageStreamListener? _spriteListener;
+  bool _spriteRequested = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _loadSprite();
-      }
-    });
-    
+    // Sprite load happens after dependencies are ready.
     _waddleController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 250),
@@ -60,6 +56,15 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
     });
 
     _scheduleNextJump();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_spriteRequested) {
+      _spriteRequested = true;
+      _loadSprite();
+    }
   }
 
   void _loadSprite() {
