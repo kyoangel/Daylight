@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class WalkingCatPet extends StatefulWidget {
   const WalkingCatPet({super.key});
@@ -29,13 +28,18 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
   // Sprite state
   ui.Image? _spriteImage;
   int _currentFrame = 0;
-  bool _spriteFailed = false;
   DateTime? _lastTick;
+  ImageStream? _spriteStream;
+  ImageStreamListener? _spriteListener;
 
   @override
   void initState() {
     super.initState();
-    _loadSprite();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _loadSprite();
+      }
+    });
     
     _waddleController = AnimationController(
       vsync: this,
@@ -58,21 +62,21 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
     _scheduleNextJump();
   }
 
-  Future<void> _loadSprite() async {
-    try {
-      final ByteData data = await rootBundle.load('assets/icons/cute_cat_spritesheet.png');
-      final ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
-      final ui.FrameInfo fi = await codec.getNextFrame();
-      if (!mounted) return;
-      setState(() {
-        _spriteImage = fi.image;
-      });
-    } catch (error) {
-      if (!mounted) return;
-      setState(() {
-        _spriteFailed = true;
-      });
+  void _loadSprite() {
+    if (_spriteStream != null && _spriteListener != null) {
+      _spriteStream!.removeListener(_spriteListener!);
     }
+
+    final provider = const AssetImage('assets/icons/cute_cat_spritesheet.png');
+    final stream = provider.resolve(createLocalImageConfiguration(context));
+    _spriteStream = stream;
+    _spriteListener = ImageStreamListener((ImageInfo info, bool _) {
+      if (!mounted) return;
+      setState(() {
+        _spriteImage = info.image;
+      });
+    });
+    stream.addListener(_spriteListener!);
   }
 
   void _updateFrame() {
@@ -156,12 +160,15 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
     _timer.cancel();
     _jumpTimer?.cancel();
     _waddleController.dispose();
+    if (_spriteStream != null && _spriteListener != null) {
+      _spriteStream!.removeListener(_spriteListener!);
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_spriteImage == null && !_spriteFailed) {
+    if (_spriteImage == null) {
       return const SizedBox.shrink();
     }
 
@@ -184,16 +191,10 @@ class _WalkingCatPetState extends State<WalkingCatPet> with TickerProviderStateM
                   alignment: Alignment.center,
                   transform: Matrix4.identity()
                     ..scale(_direction == 1 ? -1.0 : 1.0, 1.0),
-                child: _spriteImage == null
-                    ? Image.asset(
-                        'assets/icons/cute_cat_pet.png',
-                        width: 60,
-                        height: 60,
-                      )
-                    : CustomPaint(
-                        size: const Size(80, 80),
-                        painter: _SpritePainter(_spriteImage!, _currentFrame),
-                      ),
+                child: CustomPaint(
+                  size: const Size(80, 80),
+                  painter: _SpritePainter(_spriteImage!, _currentFrame),
+                ),
               ),
             ),
           );
@@ -211,11 +212,24 @@ class _SpritePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Assuming 2x2 grid for the generated spritesheet
-    double fw = image.width / 2;
-    double fh = image.height / 2;
-    int col = frame % 2;
-    int row = frame ~/ 2;
+    final width = image.width.toDouble();
+    final height = image.height.toDouble();
+    int cols = 2;
+    int rows = 2;
+    if (width >= height * 4) {
+      cols = 4;
+      rows = 1;
+    } else if (height >= width * 4) {
+      cols = 1;
+      rows = 4;
+    }
+
+    final fw = width / cols;
+    final fh = height / rows;
+    final totalFrames = cols * rows;
+    final safeFrame = frame % totalFrames;
+    final col = safeFrame % cols;
+    final row = safeFrame ~/ cols;
     
     Rect src = Rect.fromLTWH(col * fw, row * fh, fw, fh);
     Rect dst = Rect.fromLTWH(0, 0, size.width, size.height);
