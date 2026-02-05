@@ -4,7 +4,7 @@ import '../viewmodel/daily_viewmodel.dart';
 import '../../../data/models/daily_entry.dart';
 import '../../../data/content/content_repository.dart';
 import '../../../data/content/models/affirmation.dart';
-import '../../../data/content/models/micro_task.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../features/profile/viewmodel/profile_viewmodel.dart';
 import '../../../common/app_locale.dart';
 import '../../../common/app_strings.dart';
@@ -24,8 +24,6 @@ class _DailyPageState extends ConsumerState<DailyPage> {
   ContentRepository _contentRepository = ContentRepository(locale: 'zh-TW');
   String _currentLocale = 'zh-TW';
   Affirmation? _affirmation;
-  MicroTask? _microTask;
-  bool _microTaskDone = false;
   WelcomeMessage? _welcomeMessage;
   bool _loadingContent = true;
   bool _loadingWelcome = true;
@@ -52,12 +50,9 @@ class _DailyPageState extends ConsumerState<DailyPage> {
       _loadingContent = true;
     });
     final affirmations = await _contentRepository.loadAffirmations();
-    final tasks = await _contentRepository.loadMicroTasks();
     if (!mounted) return;
     setState(() {
       _affirmation = affirmations.isNotEmpty ? affirmations.first : null;
-      _microTask = tasks.isNotEmpty ? tasks.first : null;
-      _microTaskDone = false;
       _loadingContent = false;
       _pendingReload = false;
     });
@@ -89,12 +84,9 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     });
     final tags = _tagsForMood(_moodScore.round());
     final pickedAffirmation = await _contentRepository.pickAffirmation(tags: tags);
-    final pickedTask = await _contentRepository.pickMicroTask(tags: tags);
     if (!mounted) return;
     setState(() {
       _affirmation = pickedAffirmation;
-      _microTask = pickedTask;
-      _microTaskDone = false;
       _loadingContent = false;
     });
   }
@@ -108,8 +100,8 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     final entry = DailyEntry(
       date: DateTime.now(),
       moodScore: moodScore,
-      microTaskId: _microTask?.id ?? 'default',
-      microTaskDone: _microTaskDone,
+      microTaskId: 'default',
+      microTaskDone: false,
       affirmationId: _affirmation?.id ?? 'default',
       nightReflection: '',
     );
@@ -314,9 +306,9 @@ class _DailyPageState extends ConsumerState<DailyPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(
+              GestureDetector(
                 key: const Key('mood_low'),
-                onPressed: () async {
+                onTap: () async {
                   setState(() {
                     _moodScore = 3;
                   });
@@ -328,11 +320,11 @@ class _DailyPageState extends ConsumerState<DailyPage> {
                     toneStyle: toneStyle,
                   );
                 },
-                child: const Text(':( ', style: TextStyle(fontSize: 20)),
+                child: _MoodIconButton(asset: 'assets/icons/mood_low.svg'),
               ),
-              ElevatedButton(
+              GestureDetector(
                 key: const Key('mood_mid'),
-                onPressed: () async {
+                onTap: () async {
                   setState(() {
                     _moodScore = 6;
                   });
@@ -344,11 +336,11 @@ class _DailyPageState extends ConsumerState<DailyPage> {
                     toneStyle: toneStyle,
                   );
                 },
-                child: const Text(':|', style: TextStyle(fontSize: 20)),
+                child: _MoodIconButton(asset: 'assets/icons/mood_mid.svg'),
               ),
-              ElevatedButton(
+              GestureDetector(
                 key: const Key('mood_high'),
-                onPressed: () async {
+                onTap: () async {
                   setState(() {
                     _moodScore = 9;
                   });
@@ -360,39 +352,10 @@ class _DailyPageState extends ConsumerState<DailyPage> {
                     toneStyle: toneStyle,
                   );
                 },
-                child: const Text(':)', style: TextStyle(fontSize: 20)),
+                child: _MoodIconButton(asset: 'assets/icons/mood_high.svg'),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Text(strings.todayTask, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          if (_loadingContent)
-            const LinearProgressIndicator()
-          else if (_microTask != null)
-            Card(
-              child: ListTile(
-                title: Text(_microTask!.title),
-                subtitle: Text(_microTask!.description),
-                trailing: Checkbox(
-                  value: _microTaskDone,
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() {
-                      _microTaskDone = value;
-                    });
-                    if (value) {
-                      final response = strings.responseTaskDoneLine(toneStyle);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(response)),
-                      );
-                    }
-                  },
-                ),
-              ),
-            )
-          else
-            Text(strings.noTask),
           const SizedBox(height: 12),
           Text(strings.todayAffirmation, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
@@ -407,12 +370,35 @@ class _DailyPageState extends ConsumerState<DailyPage> {
             )
           else
             Text(strings.noAffirmation),
-          const SizedBox(height: 12),
-          Text(strings.nightReflection, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Text(strings.reflectionHint, style: const TextStyle(color: Colors.black54)),
         ],
       ),
+    );
+  }
+}
+
+class _MoodIconButton extends StatelessWidget {
+  const _MoodIconButton({required this.asset});
+
+  final String asset;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 64,
+      height: 64,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(8),
+      child: SvgPicture.asset(asset),
     );
   }
 }

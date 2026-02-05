@@ -41,6 +41,7 @@ dependencies:
   crop_your_image: ^1.0.7
   image: ^4.2.0
   audioplayers: ^6.1.0
+  flutter_svg: ^2.0.10
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +78,9 @@ flutter:
     - assets/content/en/micro_tasks.json
     - assets/content/en/mindfulness_guides.json
     - assets/audio/mindfulness.mp3
+    - assets/icons/mood_low.svg
+    - assets/icons/mood_mid.svg
+    - assets/icons/mood_high.svg
     - assets/content/en/welcome_messages.json
 
   # An image asset can refer to one or more resolution-specific "variants", see

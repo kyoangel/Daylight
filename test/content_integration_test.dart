@@ -18,7 +18,6 @@ void main() {
     );
 
     final strings = AppStrings.of('zh-TW');
-    expect(find.text(strings.todayTask), findsOneWidget);
     expect(find.text(strings.todayAffirmation), findsOneWidget);
   });
 
