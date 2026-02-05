@@ -13,6 +13,7 @@ import '../service/welcome_service.dart';
 import '../../../data/content/models/welcome_message.dart';
 import '../../../data/models/gratitude_entry.dart';
 import '../../../data/repositories/gratitude_repository.dart';
+import '../../../data/content/holiday_calendar.dart';
 
 class DailyPage extends ConsumerStatefulWidget {
   const DailyPage({super.key});
@@ -57,10 +58,10 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     setState(() {
       _loadingContent = true;
     });
-    final affirmations = await _contentRepository.loadAffirmations();
+    final picked = await _pickAffirmationForToday();
     if (!mounted) return;
     setState(() {
-      _affirmation = affirmations.isNotEmpty ? affirmations.first : null;
+      _affirmation = picked;
       _loadingContent = false;
       _pendingReload = false;
     });
@@ -134,13 +135,25 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     setState(() {
       _loadingContent = true;
     });
-    final tags = _tagsForMood(_selectedMoodScore);
-    final pickedAffirmation = await _contentRepository.pickAffirmation(tags: tags);
+    final pickedAffirmation = await _pickAffirmationForToday();
     if (!mounted) return;
     setState(() {
       _affirmation = pickedAffirmation;
       _loadingContent = false;
     });
+  }
+
+  Future<Affirmation?> _pickAffirmationForToday() async {
+    final today = DateTime.now();
+    final holidayTags = holidayTagsForDate(today);
+    if (holidayTags.isNotEmpty) {
+      final holidayPick = await _contentRepository.pickAffirmation(tags: holidayTags);
+      if (holidayPick != null) {
+        return holidayPick;
+      }
+    }
+    final moodTags = _tagsForMood(_selectedMoodScore);
+    return _contentRepository.pickAffirmation(tags: moodTags);
   }
 
   List<String> _tagsForMood(int mood) {

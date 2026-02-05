@@ -1,44 +1,32 @@
 [
-  {
-    "id": "welcome_001",
-    "greeting": "早安{name}，我們在這裡。",
-    "direction": "今天只要做一件小事就好。",
-    "tags": ["soft"],
-    "weight": 3
-  },
-  {
-    "id": "welcome_002",
-    "greeting": "今天也可以慢慢來{name}。",
-    "direction": "先深呼吸三次，讓身體鬆一點。",
-    "tags": ["calm"],
-    "weight": 2
-  },
-  {
-    "id": "welcome_003",
-    "greeting": "很高興看到你{name}。",
-    "direction": "我們從一個微小的步驟開始。",
-    "tags": ["gentle"],
-    "weight": 2
-  },
-  {
-    "id": "welcome_004",
-    "greeting": "你不需要急{name}，我在。",
-    "direction": "今天只做一件讓心放鬆的小事。",
-    "tags": ["support"],
-    "weight": 2
-  },
-  {
-    "id": "welcome_005",
-    "greeting": "你好{name}，我們一起慢慢來。",
-    "direction": "先寫下一個你願意完成的小目標。",
-    "tags": ["hope"],
-    "weight": 2
-  },
-  {
-    "id": "welcome_006",
-    "greeting": "今天辛苦了{name}。",
-    "direction": "只要到這裡，你就已經做得很好。",
-    "tags": ["kind"],
-    "weight": 1
-  }
+  {"id":"welcome_001","greeting":"早安{name}，我在這裡。","direction":"今天只要一件小事就好。","tags":["soft"],"weight":3},
+  {"id":"welcome_002","greeting":"今天也可以慢慢來{name}。","direction":"先深呼吸三次，讓身體鬆一點。","tags":["calm"],"weight":2},
+  {"id":"welcome_003","greeting":"很高興看到你{name}。","direction":"我們從一個微小的步驟開始。","tags":["gentle"],"weight":2},
+  {"id":"welcome_004","greeting":"你不需要急{name}，我在。","direction":"今天只做一件讓心放鬆的小事。","tags":["support"],"weight":2},
+  {"id":"welcome_005","greeting":"你好{name}，我們一起慢慢來。","direction":"先寫下一個你願意完成的小目標。","tags":["hope"],"weight":2},
+  {"id":"welcome_006","greeting":"今天辛苦了{name}。","direction":"只要到這裡，你就已經做得很好。","tags":["kind"],"weight":2},
+  {"id":"welcome_007","greeting":"歡迎回來{name}。","direction":"先喝口水，再開始也很好。","tags":["soft"],"weight":2},
+  {"id":"welcome_008","greeting":"嗨{name}，我在。","direction":"把今天的目標縮小一點。","tags":["gentle"],"weight":2},
+  {"id":"welcome_009","greeting":"今天我們一起慢慢走{name}。","direction":"先做一件最簡單的事。","tags":["calm"],"weight":2},
+  {"id":"welcome_010","greeting":"你來了{name}，很好。","direction":"先讓肩膀放鬆，慢慢開始。","tags":["soft"],"weight":2},
+  {"id":"welcome_011","greeting":"早安{name}。","direction":"今天只要一小步就夠。","tags":["gentle"],"weight":2},
+  {"id":"welcome_012","greeting":"你好{name}，先深呼吸。","direction":"今天把節奏放慢一些。","tags":["calm"],"weight":2},
+  {"id":"welcome_013","greeting":"很開心見到你{name}。","direction":"先選一件你願意做的小事。","tags":["hope"],"weight":2},
+  {"id":"welcome_014","greeting":"今天也一起走吧{name}。","direction":"先把心安定下來。","tags":["soft"],"weight":2},
+  {"id":"welcome_015","greeting":"你好{name}，慢慢來就好。","direction":"只做一件最重要的小事。","tags":["support"],"weight":2},
+  {"id":"welcome_016","greeting":"嗨{name}，你已經很棒。","direction":"今天只要做到一件就好。","tags":["kind"],"weight":2},
+  {"id":"welcome_017","greeting":"早安{name}，今天也一起。","direction":"先深呼吸，讓心落地。","tags":["calm"],"weight":2},
+  {"id":"welcome_018","greeting":"今天想對自己溫柔一點嗎{name}？","direction":"從一件小事開始。","tags":["gentle"],"weight":2},
+  {"id":"welcome_019","greeting":"你回來了{name}，很好。","direction":"先整理一個角落就好。","tags":["soft"],"weight":2},
+  {"id":"welcome_020","greeting":"你好{name}，你值得被好好照顧。","direction":"今天只做一小步就好。","tags":["kind"],"weight":2},
+  {"id":"welcome_021","greeting":"很開心你出現{name}。","direction":"先把目標縮小到最小。","tags":["gentle"],"weight":2},
+  {"id":"welcome_022","greeting":"今天也陪著你{name}。","direction":"先讓自己舒服一點。","tags":["support"],"weight":2},
+  {"id":"welcome_023","greeting":"嗨{name}，辛苦了。","direction":"今天只要做一件就好。","tags":["kind"],"weight":2},
+  {"id":"welcome_024","greeting":"早安{name}，慢慢走。","direction":"先做最容易的那一步。","tags":["hope"],"weight":2},
+  {"id":"welcome_025","greeting":"你來了{name}，就很好。","direction":"先把呼吸放慢。","tags":["calm"],"weight":2},
+  {"id":"welcome_026","greeting":"今天也一起努力{name}。","direction":"先完成一個小任務。","tags":["hope"],"weight":2},
+  {"id":"welcome_027","greeting":"你好{name}，我在這裡陪你。","direction":"今天先照顧好自己。","tags":["support"],"weight":2},
+  {"id":"welcome_028","greeting":"慢慢來就好{name}。","direction":"先整理一件小事。","tags":["gentle"],"weight":2},
+  {"id":"welcome_029","greeting":"你已經做得很好{name}。","direction":"今天只要一小步就好。","tags":["kind"],"weight":2},
+  {"id":"welcome_030","greeting":"歡迎{name}，我們一起。","direction":"先讓心慢下來，再開始。","tags":["soft"],"weight":2}
 ]

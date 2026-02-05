@@ -1,20 +1,39 @@
 [
-  {
-    "id": "aff_001",
-    "text": "You made it through today, and that matters.",
-    "tags": ["calm", "tired"],
-    "weight": 2
-  },
-  {
-    "id": "aff_002",
-    "text": "Small steps still move you forward.",
-    "tags": ["hope", "low"],
-    "weight": 3
-  },
-  {
-    "id": "aff_003",
-    "text": "You deserve kindness from yourself.",
-    "tags": ["self-kindness"],
-    "weight": 1
-  }
+  {"id":"aff_001","text":"You made it through today, and that matters.","tags":["calm","tired"],"weight":2},
+  {"id":"aff_002","text":"Small steps still move you forward.","tags":["hope","low"],"weight":3},
+  {"id":"aff_003","text":"You deserve kindness from yourself.","tags":["self-kindness"],"weight":2},
+  {"id":"aff_004","text":"It is okay to keep the pace gentle today.","tags":["calm","reset"],"weight":2},
+  {"id":"aff_005","text":"Even a little effort counts.","tags":["gentle","low"],"weight":2},
+  {"id":"aff_006","text":"Taking care of yourself is brave.","tags":["self-kindness","hope"],"weight":2},
+  {"id":"aff_007","text":"You have already been doing your best.","tags":["calm","tired"],"weight":2},
+  {"id":"aff_008","text":"There is no rush. We can go slowly.","tags":["gentle","calm"],"weight":2},
+  {"id":"aff_009","text":"You can do this. I believe in you.","tags":["hope","refresh"],"weight":2},
+  {"id":"aff_010","text":"One step today is still a win.","tags":["low","hope"],"weight":2},
+  {"id":"aff_011","text":"Let your breath slow down and settle.","tags":["calm","reset"],"weight":2},
+  {"id":"aff_012","text":"Your effort is seen.","tags":["hope","gentle"],"weight":2},
+  {"id":"aff_013","text":"You do not need to be perfect.","tags":["self-kindness","calm"],"weight":2},
+  {"id":"aff_014","text":"Rest a little, then continue when you are ready.","tags":["reset","calm"],"weight":2},
+  {"id":"aff_015","text":"Doing one thing today is enough.","tags":["low","hope"],"weight":2},
+  {"id":"aff_016","text":"You are learning to be gentle with yourself.","tags":["self-kindness","gentle"],"weight":2},
+  {"id":"aff_017","text":"Put yourself on your own priority list.","tags":["self-kindness","refresh"],"weight":2},
+  {"id":"aff_018","text":"Every bit of progress is still progress.","tags":["hope","refresh"],"weight":2},
+  {"id":"aff_019","text":"You deserve to be acknowledged today.","tags":["gentle","calm"],"weight":2},
+  {"id":"aff_020","text":"A quiet heart can be a good start.","tags":["calm","reset"],"weight":2},
+
+  {"id":"aff_021","text":"A gentle start for the new year.","tags":["holiday:new_year"],"weight":3},
+  {"id":"aff_022","text":"New year, soft steps for yourself.","tags":["holiday:new_year","gentle"],"weight":3},
+  {"id":"aff_023","text":"Lunar New Year is for reunion and rest.","tags":["holiday:lunar_new_year"],"weight":3},
+  {"id":"aff_024","text":"This holiday, take care of your heart too.","tags":["holiday:lunar_new_year","calm"],"weight":3},
+  {"id":"aff_025","text":"Lantern light reminds you: you glow too.","tags":["holiday:lantern","hope"],"weight":3},
+  {"id":"aff_026","text":"Find a little calm in the lanterns.","tags":["holiday:lantern","calm"],"weight":3},
+  {"id":"aff_027","text":"Peace today, and peace for your heart.","tags":["holiday:peace_memorial"],"weight":3},
+  {"id":"aff_028","text":"Qingming is also for gentle remembrance.","tags":["holiday:qingming"],"weight":3},
+  {"id":"aff_029","text":"Childlike care can include yourself too.","tags":["holiday:children"],"weight":3},
+  {"id":"aff_030","text":"Labor Day: your effort deserves respect.","tags":["holiday:labor"],"weight":3},
+  {"id":"aff_031","text":"Dragon Boat day, may you find strength.","tags":["holiday:dragon_boat"],"weight":3},
+  {"id":"aff_032","text":"Mid-Autumn moon: you are not alone.","tags":["holiday:mid_autumn"],"weight":3},
+  {"id":"aff_033","text":"National Day: be proud of yourself too.","tags":["holiday:national_day"],"weight":3},
+  {"id":"aff_034","text":"Teacher's Day: thank yourself for learning to care.","tags":["holiday:confucius"],"weight":3},
+  {"id":"aff_035","text":"Retrocession Day: reclaim your strength.","tags":["holiday:retrocession"],"weight":3},
+  {"id":"aff_036","text":"A soft blessing for the holidays.","tags":["holiday:christmas","holiday:constitution"],"weight":3}
 ]

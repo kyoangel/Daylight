@@ -1,20 +1,39 @@
 [
-  {
-    "id": "aff_001",
-    "text": "你今天走到這裡已經很不容易。",
-    "tags": ["calm", "tired"],
-    "weight": 2
-  },
-  {
-    "id": "aff_002",
-    "text": "小小的一步也在向前。",
-    "tags": ["hope", "low"],
-    "weight": 3
-  },
-  {
-    "id": "aff_003",
-    "text": "你值得對自己溫柔一點。",
-    "tags": ["self-kindness"],
-    "weight": 1
-  }
+  {"id":"aff_001","text":"你今天走到這裡已經很不容易。","tags":["calm","tired"],"weight":2},
+  {"id":"aff_002","text":"小小的一步也在向前。","tags":["hope","low"],"weight":3},
+  {"id":"aff_003","text":"你值得對自己溫柔一點。","tags":["self-kindness"],"weight":2},
+  {"id":"aff_004","text":"今天先把步伐放小也沒關係。","tags":["calm","reset"],"weight":2},
+  {"id":"aff_005","text":"就算只有一點點，也算是努力。","tags":["gentle","low"],"weight":2},
+  {"id":"aff_006","text":"你願意照顧自己，已經很勇敢。","tags":["self-kindness","hope"],"weight":2},
+  {"id":"aff_007","text":"此刻的你，已經很努力了。","tags":["calm","tired"],"weight":2},
+  {"id":"aff_008","text":"慢慢來就好，我們不趕。","tags":["gentle","calm"],"weight":2},
+  {"id":"aff_009","text":"你做得到，我相信你。","tags":["hope","refresh"],"weight":2},
+  {"id":"aff_010","text":"今天能走一步就很棒。","tags":["low","gentle"],"weight":2},
+  {"id":"aff_011","text":"把呼吸放慢，你會更穩。","tags":["calm","reset"],"weight":2},
+  {"id":"aff_012","text":"你的努力會被看見。","tags":["hope","gentle"],"weight":2},
+  {"id":"aff_013","text":"你不需要完美，夠好就好。","tags":["self-kindness","calm"],"weight":2},
+  {"id":"aff_014","text":"讓自己先休息一下，再出發。","tags":["reset","calm"],"weight":2},
+  {"id":"aff_015","text":"今天有做到一件事就很好。","tags":["low","hope"],"weight":2},
+  {"id":"aff_016","text":"你正在學會更溫柔地對待自己。","tags":["self-kindness","gentle"],"weight":2},
+  {"id":"aff_017","text":"把自己放在優先順序裡。","tags":["self-kindness","refresh"],"weight":2},
+  {"id":"aff_018","text":"每一點前進都是前進。","tags":["hope","refresh"],"weight":2},
+  {"id":"aff_019","text":"今天的你也值得被肯定。","tags":["gentle","calm"],"weight":2},
+  {"id":"aff_020","text":"先讓心安靜下來也很好。","tags":["calm","reset"],"weight":2},
+
+  {"id":"aff_021","text":"新的一年，給自己一個溫柔的開始。","tags":["holiday:new_year"],"weight":3},
+  {"id":"aff_022","text":"新年也要好好照顧自己。","tags":["holiday:new_year","gentle"],"weight":3},
+  {"id":"aff_023","text":"新年團圓，也別忘了照顧自己的心。","tags":["holiday:lunar_new_year"],"weight":3},
+  {"id":"aff_024","text":"過年也可以慢慢來，先照顧好自己。","tags":["holiday:lunar_new_year","calm"],"weight":3},
+  {"id":"aff_025","text":"元宵的光亮提醒你：你也在發光。","tags":["holiday:lantern","hope"],"weight":3},
+  {"id":"aff_026","text":"在燈火裡，願你也找到安心。","tags":["holiday:lantern","calm"],"weight":3},
+  {"id":"aff_027","text":"在這一天，記得珍惜和平與自己。","tags":["holiday:peace_memorial"],"weight":3},
+  {"id":"aff_028","text":"清明時節，思念也要溫柔對待自己。","tags":["holiday:qingming"],"weight":3},
+  {"id":"aff_029","text":"兒童節提醒我們：你也值得被好好照顧。","tags":["holiday:children"],"weight":3},
+  {"id":"aff_030","text":"勞動節也請肯定你的付出。","tags":["holiday:labor"],"weight":3},
+  {"id":"aff_031","text":"端午的氣味裡，願你也找到力量。","tags":["holiday:dragon_boat"],"weight":3},
+  {"id":"aff_032","text":"中秋的月亮提醒你：你不孤單。","tags":["holiday:mid_autumn"],"weight":3},
+  {"id":"aff_033","text":"在這一天，為自己感到驕傲。","tags":["holiday:national_day"],"weight":3},
+  {"id":"aff_034","text":"教師節的今天，也謝謝你願意學習照顧自己。","tags":["holiday:confucius"],"weight":3},
+  {"id":"aff_035","text":"光復紀念日，也為自己找回力量。","tags":["holiday:retrocession"],"weight":3},
+  {"id":"aff_036","text":"在節日裡，給自己一個溫柔的祝福。","tags":["holiday:christmas","holiday:constitution"],"weight":3}
 ]

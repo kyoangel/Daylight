@@ -1,44 +1,32 @@
 [
-  {
-    "id": "welcome_001",
-    "greeting": "Good morning{name}, I'm here with you.",
-    "direction": "One small step is enough for today.",
-    "tags": ["soft"],
-    "weight": 3
-  },
-  {
-    "id": "welcome_002",
-    "greeting": "We can go slowly today{name}.",
-    "direction": "Take three gentle breaths first.",
-    "tags": ["calm"],
-    "weight": 2
-  },
-  {
-    "id": "welcome_003",
-    "greeting": "I'm glad you're here{name}.",
-    "direction": "Let's start with a tiny, kind step.",
-    "tags": ["gentle"],
-    "weight": 2
-  },
-  {
-    "id": "welcome_004",
-    "greeting": "No need to rush{name}, I'm with you.",
-    "direction": "Choose one small thing to soften your day.",
-    "tags": ["support"],
-    "weight": 2
-  },
-  {
-    "id": "welcome_005",
-    "greeting": "Hello{name}, let's take it gently.",
-    "direction": "Write down one doable intention.",
-    "tags": ["hope"],
-    "weight": 2
-  },
-  {
-    "id": "welcome_006",
-    "greeting": "You made it here{name}.",
-    "direction": "That alone is something to be proud of.",
-    "tags": ["kind"],
-    "weight": 1
-  }
+  {"id":"welcome_001","greeting":"Good morning{name}, I am here.","direction":"One small step is enough today.","tags":["soft"],"weight":3},
+  {"id":"welcome_002","greeting":"You can go slowly today{name}.","direction":"Take three breaths to soften your body.","tags":["calm"],"weight":2},
+  {"id":"welcome_003","greeting":"Glad to see you{name}.","direction":"Let us start with one tiny step.","tags":["gentle"],"weight":2},
+  {"id":"welcome_004","greeting":"No rush{name}, I am with you.","direction":"Do one small thing that helps your heart settle.","tags":["support"],"weight":2},
+  {"id":"welcome_005","greeting":"Hello{name}, we can take it slow.","direction":"Choose one small goal you are willing to try.","tags":["hope"],"weight":2},
+  {"id":"welcome_006","greeting":"You worked hard{name}.","direction":"Getting here is already good.","tags":["kind"],"weight":2},
+  {"id":"welcome_007","greeting":"Welcome back{name}.","direction":"Sip some water, then begin.","tags":["soft"],"weight":2},
+  {"id":"welcome_008","greeting":"Hi{name}, I am here.","direction":"Shrink the goal to the smallest step.","tags":["gentle"],"weight":2},
+  {"id":"welcome_009","greeting":"Let us walk slowly today{name}.","direction":"Pick the easiest thing first.","tags":["calm"],"weight":2},
+  {"id":"welcome_010","greeting":"You are here{name}, good.","direction":"Relax your shoulders and start gently.","tags":["soft"],"weight":2},
+  {"id":"welcome_011","greeting":"Good morning{name}.","direction":"One small step is enough.","tags":["gentle"],"weight":2},
+  {"id":"welcome_012","greeting":"Hello{name}, breathe.","direction":"Slow the pace a little today.","tags":["calm"],"weight":2},
+  {"id":"welcome_013","greeting":"Glad you are here{name}.","direction":"Pick one small thing to do.","tags":["hope"],"weight":2},
+  {"id":"welcome_014","greeting":"Let us walk together{name}.","direction":"Settle your heart first.","tags":["soft"],"weight":2},
+  {"id":"welcome_015","greeting":"Hi{name}, take it slow.","direction":"Do one important small thing.","tags":["support"],"weight":2},
+  {"id":"welcome_016","greeting":"You are doing well{name}.","direction":"One task is enough today.","tags":["kind"],"weight":2},
+  {"id":"welcome_017","greeting":"Good morning{name}, we are here.","direction":"Breathe and let your feet feel the ground.","tags":["calm"],"weight":2},
+  {"id":"welcome_018","greeting":"Want a gentle day{name}?","direction":"Start with one tiny step.","tags":["gentle"],"weight":2},
+  {"id":"welcome_019","greeting":"You are back{name}, good.","direction":"Tidy one small corner.","tags":["soft"],"weight":2},
+  {"id":"welcome_020","greeting":"Hello{name}, you deserve care.","direction":"One small step is enough today.","tags":["kind"],"weight":2},
+  {"id":"welcome_021","greeting":"Happy to see you{name}.","direction":"Make the goal as small as possible.","tags":["gentle"],"weight":2},
+  {"id":"welcome_022","greeting":"I am with you today{name}.","direction":"Get comfortable first.","tags":["support"],"weight":2},
+  {"id":"welcome_023","greeting":"Hi{name}, you did a lot.","direction":"Just one thing today is enough.","tags":["kind"],"weight":2},
+  {"id":"welcome_024","greeting":"Good morning{name}, slow steps.","direction":"Start with the easiest step.","tags":["hope"],"weight":2},
+  {"id":"welcome_025","greeting":"You are here{name}, that is enough.","direction":"Slow your breathing first.","tags":["calm"],"weight":2},
+  {"id":"welcome_026","greeting":"Let us try together{name}.","direction":"Complete one tiny task.","tags":["hope"],"weight":2},
+  {"id":"welcome_027","greeting":"Hello{name}, I am here with you.","direction":"Take care of yourself first.","tags":["support"],"weight":2},
+  {"id":"welcome_028","greeting":"Take it slow{name}.","direction":"Tidy one small thing.","tags":["gentle"],"weight":2},
+  {"id":"welcome_029","greeting":"You did well{name}.","direction":"One small step is enough today.","tags":["kind"],"weight":2},
+  {"id":"welcome_030","greeting":"Welcome{name}, we are in this together.","direction":"Slow your heart, then begin.","tags":["soft"],"weight":2}
 ]
