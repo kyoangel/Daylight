@@ -127,24 +127,26 @@ class _WalkingCatPetState extends State<WalkingCatPet> with SingleTickerProvider
     return Positioned(
       left: _x,
       top: _y + _jumpYOffset,
-      child: AnimatedBuilder(
-        animation: _bobController,
-        builder: (context, child) {
-          double bobY = _isJumping ? 0 : _bobController.value * -4;
-          return Transform.translate(
-            offset: Offset(0, bobY),
-            child: Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.identity()
-                ..scale(_direction == 1 ? -1.0 : 1.0, 1.0), // Flip based on direction
-              child: Image.asset(
-                'assets/icons/cute_cat_pet.png',
-                width: 60,
-                height: 60,
+      child: IgnorePointer(
+        child: AnimatedBuilder(
+          animation: _bobController,
+          builder: (context, child) {
+            double bobY = _isJumping ? 0 : _bobController.value * -4;
+            return Transform.translate(
+              offset: Offset(0, bobY),
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()
+                  ..scale(_direction == 1 ? -1.0 : 1.0, 1.0), // Flip based on direction
+                child: Image.asset(
+                  'assets/icons/cute_cat_pet.png',
+                  width: 60,
+                  height: 60,
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
