@@ -22,7 +22,7 @@ class DailyPage extends ConsumerStatefulWidget {
 }
 
 class _DailyPageState extends ConsumerState<DailyPage> {
-  double _moodScore = 5;
+  int _selectedMoodScore = 6;
   ContentRepository _contentRepository = ContentRepository(locale: 'zh-TW');
   String _currentLocale = 'zh-TW';
   Affirmation? _affirmation;
@@ -91,7 +91,10 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     });
   }
 
-  Future<void> _saveGratitude(AppStrings strings) async {
+  Future<void> _saveGratitude({
+    required AppStrings strings,
+    required DailyViewModel vm,
+  }) async {
     final content = _gratitudeController.text.trim();
     if (content.isEmpty) return;
     final now = DateTime.now();
@@ -99,8 +102,18 @@ class _DailyPageState extends ConsumerState<DailyPage> {
       id: 'grat_${now.millisecondsSinceEpoch}',
       createdAt: now,
       content: content,
+      moodScore: _selectedMoodScore,
     );
     await _gratitudeRepository.add(entry);
+    final dailyEntry = DailyEntry(
+      date: DateTime(now.year, now.month, now.day),
+      moodScore: _selectedMoodScore,
+      microTaskId: 'default',
+      microTaskDone: false,
+      affirmationId: _affirmation?.id ?? 'default',
+      nightReflection: '',
+    );
+    await vm.upsertEntry(dailyEntry);
     if (!mounted) return;
     _gratitudeController.clear();
     await _loadGratitude();
@@ -121,7 +134,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     setState(() {
       _loadingContent = true;
     });
-    final tags = _tagsForMood(_moodScore.round());
+    final tags = _tagsForMood(_selectedMoodScore);
     final pickedAffirmation = await _contentRepository.pickAffirmation(tags: tags);
     if (!mounted) return;
     setState(() {
@@ -130,49 +143,16 @@ class _DailyPageState extends ConsumerState<DailyPage> {
     });
   }
 
-  Future<void> _saveQuickEntry({
-    required int moodScore,
-    required DailyViewModel vm,
-    required AppStrings strings,
-    required String toneStyle,
-  }) async {
-    final entry = DailyEntry(
-      date: DateTime.now(),
-      moodScore: moodScore,
-      microTaskId: 'default',
-      microTaskDone: false,
-      affirmationId: _affirmation?.id ?? 'default',
-      nightReflection: '',
-    );
-    await vm.upsertEntry(entry);
-    if (!mounted) return;
-    final response = strings.responseSavedLine(toneStyle);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(response)),
-    );
-    final closingBody = strings.nightlyClosingBody(toneStyle);
-    if (!mounted) return;
-    await showDialog<void>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(strings.nightlyClosingTitle),
-          content: Text(closingBody),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(strings.close),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   List<String> _tagsForMood(int mood) {
     if (mood <= 3) return ['low', 'calm', 'self-kindness'];
     if (mood <= 6) return ['calm', 'reset'];
     return ['hope', 'gentle', 'refresh'];
+  }
+
+  String _moodAssetForScore(int score) {
+    if (score <= 3) return 'assets/icons/mood_low.svg';
+    if (score <= 6) return 'assets/icons/mood_mid.svg';
+    return 'assets/icons/mood_high.svg';
   }
 
   bool _shouldShowSoftIntervention(List<DailyEntry> entries, DateTime now) {
@@ -289,57 +269,27 @@ class _DailyPageState extends ConsumerState<DailyPage> {
           ],
           Text(strings.todayMood, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              GestureDetector(
-                key: const Key('mood_low'),
-                onTap: () async {
-                  setState(() {
-                    _moodScore = 3;
-                  });
-                  await _refreshContentByMood();
-                  await _saveQuickEntry(
-                    moodScore: 3,
-                    vm: vm,
-                    strings: strings,
-                    toneStyle: toneStyle,
-                  );
-                },
-                child: _MoodIconButton(asset: 'assets/icons/mood_low.svg'),
-              ),
-              GestureDetector(
-                key: const Key('mood_mid'),
-                onTap: () async {
-                  setState(() {
-                    _moodScore = 6;
-                  });
-                  await _refreshContentByMood();
-                  await _saveQuickEntry(
-                    moodScore: 6,
-                    vm: vm,
-                    strings: strings,
-                    toneStyle: toneStyle,
-                  );
-                },
-                child: _MoodIconButton(asset: 'assets/icons/mood_mid.svg'),
-              ),
-              GestureDetector(
-                key: const Key('mood_high'),
-                onTap: () async {
-                  setState(() {
-                    _moodScore = 9;
-                  });
-                  await _refreshContentByMood();
-                  await _saveQuickEntry(
-                    moodScore: 9,
-                    vm: vm,
-                    strings: strings,
-                    toneStyle: toneStyle,
-                  );
-                },
-                child: _MoodIconButton(asset: 'assets/icons/mood_high.svg'),
-              ),
+          ToggleButtons(
+            isSelected: [
+              _selectedMoodScore == 3,
+              _selectedMoodScore == 6,
+              _selectedMoodScore == 9,
+            ],
+            borderRadius: BorderRadius.circular(18),
+            borderColor: Colors.transparent,
+            selectedBorderColor: Colors.teal.withOpacity(0.3),
+            fillColor: Colors.teal.withOpacity(0.08),
+            onPressed: (index) async {
+              final nextScore = index == 0 ? 3 : index == 1 ? 6 : 9;
+              setState(() {
+                _selectedMoodScore = nextScore;
+              });
+              await _refreshContentByMood();
+            },
+            children: const [
+              _MoodIconButton(key: Key('mood_low'), asset: 'assets/icons/mood_low.svg'),
+              _MoodIconButton(key: Key('mood_mid'), asset: 'assets/icons/mood_mid.svg'),
+              _MoodIconButton(key: Key('mood_high'), asset: 'assets/icons/mood_high.svg'),
             ],
           ),
           const SizedBox(height: 12),
@@ -371,7 +321,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _loadingGratitude ? null : () => _saveGratitude(strings),
+              onPressed: _loadingGratitude ? null : () => _saveGratitude(strings: strings, vm: vm),
               child: Text(strings.gratitudeSave),
             ),
           ),
@@ -383,8 +333,10 @@ class _DailyPageState extends ConsumerState<DailyPage> {
           else ...[
             ..._gratitudeEntries.take(3).map((entry) {
               final dateLabel = '${entry.createdAt.month}/${entry.createdAt.day}';
+              final moodAsset = _moodAssetForScore(entry.moodScore);
               return Card(
                 child: ListTile(
+                  leading: SvgPicture.asset(moodAsset, width: 28, height: 28),
                   title: Text(entry.content),
                   trailing: Text(dateLabel, style: const TextStyle(color: Colors.black54)),
                 ),
@@ -415,7 +367,9 @@ class _DailyPageState extends ConsumerState<DailyPage> {
                                   itemBuilder: (context, index) {
                                     final entry = _gratitudeEntries[index];
                                     final dateLabel = '${entry.createdAt.month}/${entry.createdAt.day}';
+                                    final moodAsset = _moodAssetForScore(entry.moodScore);
                                     return ListTile(
+                                      leading: SvgPicture.asset(moodAsset, width: 28, height: 28),
                                       title: Text(entry.content),
                                       trailing: Text(dateLabel,
                                           style: const TextStyle(color: Colors.black54)),
@@ -440,7 +394,7 @@ class _DailyPageState extends ConsumerState<DailyPage> {
 }
 
 class _MoodIconButton extends StatelessWidget {
-  const _MoodIconButton({required this.asset});
+  const _MoodIconButton({super.key, required this.asset});
 
   final String asset;
 

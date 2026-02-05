@@ -97,6 +97,7 @@ void main() {
       id: 'grat_1',
       createdAt: DateTime(2026, 2, 5),
       content: 'sunshine',
+      moodScore: 6,
     );
 
     await repo.add(entry);
