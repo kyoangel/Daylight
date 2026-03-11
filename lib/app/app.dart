@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../ads/banner_ad_overlay.dart';
 import '../core/theme/theme_provider.dart';
-import '../core/theme/theme_model.dart';
 import '../common/app_strings.dart';
 import '../common/locale_provider.dart';
 import '../features/onboarding/view/onboarding_page.dart';
@@ -35,7 +35,9 @@ class DaylightApp extends ConsumerWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: appTheme.color,
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
         ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -70,12 +72,9 @@ class MainNavigation extends ConsumerStatefulWidget {
 }
 
 class _MainNavigationState extends ConsumerState<MainNavigation> {
+  static const double _bannerHeight = 50;
   int _currentIndex = 0;
-  final List<Widget> _pages = const [
-    DailyPage(),
-    DiaryPage(),
-    ProfilePage(),
-  ];
+  final List<Widget> _pages = const [DailyPage(), DiaryPage(), ProfilePage()];
 
   @override
   Widget build(BuildContext context) {
@@ -83,17 +82,32 @@ class _MainNavigationState extends ConsumerState<MainNavigation> {
     final strings = AppStrings.of(locale);
     return Scaffold(
       body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(icon: const Icon(Icons.wb_sunny), label: strings.navDaily),
-          BottomNavigationBarItem(icon: const Icon(Icons.book), label: strings.navDiary),
-          BottomNavigationBarItem(icon: const Icon(Icons.person), label: strings.navProfile),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const BannerAdOverlay(),
+          BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            items: [
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.wb_sunny),
+                label: strings.navDaily,
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.book),
+                label: strings.navDiary,
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.person),
+                label: strings.navProfile,
+              ),
+            ],
+          ),
         ],
       ),
     );
