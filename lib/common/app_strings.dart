@@ -25,6 +25,16 @@ class AppStrings {
   String get moodBaselineLabel => isEnglish ? 'Mood baseline' : '心情基準';
   String get toneLabel => isEnglish ? 'Support tone' : '陪伴語氣';
   String get languageToggleLabel => isEnglish ? 'App language' : '語言切換';
+  String get removeAdsSectionTitle => isEnglish ? 'Remove Ads' : '去廣告';
+  String get removeAdsUnlocked =>
+      isEnglish ? 'Ads removed permanently' : '廣告已解鎖';
+  String get restorePurchase => isEnglish ? 'Restore Purchase' : '回復購買';
+  String removeAdsButtonLabel(String priceLabel) =>
+      isEnglish ? '$priceLabel Remove ads forever' : '$priceLabel 移除永久廣告';
+  String get purchasePending => isEnglish ? 'Purchase pending...' : '購買處理中...';
+  String get restoringPurchase =>
+      isEnglish ? 'Restoring purchase...' : '正在回復購買...';
+  String get storeUnavailable => isEnglish ? 'Store unavailable' : '商店目前不可用';
 
   String get onboardingWelcome => isEnglish ? 'Welcome' : '歡迎';
   String get onboardingWelcomeBody =>

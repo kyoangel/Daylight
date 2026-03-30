@@ -1,17 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'admob_ids.dart';
+import '../providers/ad_status_provider.dart';
 
-class BannerAdOverlay extends StatefulWidget {
+class BannerAdOverlay extends ConsumerStatefulWidget {
   const BannerAdOverlay({super.key});
 
   @override
-  State<BannerAdOverlay> createState() => _BannerAdOverlayState();
+  ConsumerState<BannerAdOverlay> createState() => _BannerAdOverlayState();
 }
 
-class _BannerAdOverlayState extends State<BannerAdOverlay> {
+class _BannerAdOverlayState extends ConsumerState<BannerAdOverlay> {
   static const double _fallbackBannerHeight = 50;
   BannerAd? _bannerAd;
   bool _isLoaded = false;
@@ -67,6 +69,11 @@ class _BannerAdOverlayState extends State<BannerAdOverlay> {
 
   @override
   Widget build(BuildContext context) {
+    final adStatus = ref.watch(adStatusProvider);
+    if (adStatus.isAdRemoved) {
+      return const SizedBox.shrink();
+    }
+
     final ad = _bannerAd;
     if (!_isLoaded || ad == null) {
       return const SafeArea(

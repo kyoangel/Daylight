@@ -4,6 +4,7 @@ import '../ads/banner_ad_overlay.dart';
 import '../core/theme/theme_provider.dart';
 import '../common/app_strings.dart';
 import '../common/locale_provider.dart';
+import '../providers/ad_status_provider.dart';
 import '../features/onboarding/view/onboarding_page.dart';
 import '../features/daily/view/daily_page.dart';
 import '../features/diary/view/diary_page.dart';
@@ -24,7 +25,7 @@ class DaylightApp extends ConsumerWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: appTheme.color,
           primary: appTheme.color,
-          secondary: appTheme.color.withOpacity(0.7),
+          secondary: appTheme.color.withValues(alpha: 0.7),
         ),
         appBarTheme: AppBarTheme(
           backgroundColor: appTheme.color,
@@ -46,7 +47,7 @@ class DaylightApp extends ConsumerWidget {
         scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: appTheme.color.withOpacity(0.08),
+          backgroundColor: appTheme.color.withValues(alpha: 0.08),
           selectedItemColor: appTheme.color,
           unselectedItemColor: Colors.grey,
           elevation: 0,
@@ -72,12 +73,12 @@ class MainNavigation extends ConsumerStatefulWidget {
 }
 
 class _MainNavigationState extends ConsumerState<MainNavigation> {
-  static const double _bannerHeight = 50;
   int _currentIndex = 0;
   final List<Widget> _pages = const [DailyPage(), DiaryPage(), ProfilePage()];
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(adStatusProvider);
     final locale = ref.watch(localeProvider);
     final strings = AppStrings.of(locale);
     return Scaffold(
