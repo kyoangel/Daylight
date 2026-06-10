@@ -31,8 +31,30 @@ def extract_circle():
     print(f"Saved {CIRCLE_PNG} ({w}x{h})")
 
 
+def make_square_master(circle, size):
+    """Composite the circular artwork onto a full-bleed square of BG_COLOR.
+
+    Resizing the circle to exactly `size x size` makes its diameter match the
+    canvas, so the transparent corners reveal the same BG_COLOR behind it —
+    the circle's edge disappears and the result is a seamless solid-color
+    square with the artwork centered.
+    """
+    resized = circle.resize((size, size), Image.LANCZOS)
+    master = Image.new("RGB", (size, size), BG_COLOR)
+    master.paste(resized, (0, 0), resized)
+    return master
+
+
+def generate_master():
+    circle = Image.open(CIRCLE_PNG)
+    master = make_square_master(circle, 1024)
+    master.save(MASTER_PNG)
+    print(f"Saved {MASTER_PNG} (1024x1024)")
+
+
 def main():
     extract_circle()
+    generate_master()
 
 
 if __name__ == "__main__":
