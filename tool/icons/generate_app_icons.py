@@ -98,11 +98,30 @@ def generate_macos():
     print(f"Generated {len(MACOS_SIZES)} macOS icons in {MACOS_DIR}")
 
 
+ANDROID_RES = os.path.join(REPO_ROOT, "android", "app", "src", "main", "res")
+ANDROID_LEGACY_SIZES = {
+    "mipmap-mdpi": 48,
+    "mipmap-hdpi": 72,
+    "mipmap-xhdpi": 96,
+    "mipmap-xxhdpi": 144,
+    "mipmap-xxxhdpi": 192,
+}
+
+
+def generate_android_legacy():
+    master = Image.open(MASTER_PNG)
+    for dirname, size in ANDROID_LEGACY_SIZES.items():
+        out = master.resize((size, size), Image.LANCZOS)
+        out.save(os.path.join(ANDROID_RES, dirname, "ic_launcher.png"))
+    print(f"Generated {len(ANDROID_LEGACY_SIZES)} Android legacy icons")
+
+
 def main():
     extract_circle()
     generate_master()
     generate_ios()
     generate_macos()
+    generate_android_legacy()
 
 
 if __name__ == "__main__":
