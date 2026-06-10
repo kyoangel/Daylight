@@ -116,12 +116,35 @@ def generate_android_legacy():
     print(f"Generated {len(ANDROID_LEGACY_SIZES)} Android legacy icons")
 
 
+ANDROID_ADAPTIVE_SIZES = {
+    "mipmap-mdpi": 108,
+    "mipmap-hdpi": 162,
+    "mipmap-xhdpi": 216,
+    "mipmap-xxhdpi": 324,
+    "mipmap-xxxhdpi": 432,
+}
+SAFE_ZONE_RATIO = 66 / 108  # Android adaptive icon safe-zone diameter / canvas size
+
+
+def generate_android_adaptive():
+    circle = Image.open(CIRCLE_PNG)
+    for dirname, size in ANDROID_ADAPTIVE_SIZES.items():
+        diam = round(size * SAFE_ZONE_RATIO)
+        fg = circle.resize((diam, diam), Image.LANCZOS)
+        canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        offset = (size - diam) // 2
+        canvas.paste(fg, (offset, offset), fg)
+        canvas.save(os.path.join(ANDROID_RES, dirname, "ic_launcher_foreground.png"))
+    print(f"Generated {len(ANDROID_ADAPTIVE_SIZES)} Android adaptive foreground icons")
+
+
 def main():
     extract_circle()
     generate_master()
     generate_ios()
     generate_macos()
     generate_android_legacy()
+    generate_android_adaptive()
 
 
 if __name__ == "__main__":
