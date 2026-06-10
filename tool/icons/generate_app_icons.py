@@ -79,10 +79,30 @@ def generate_ios():
     print(f"Generated {len(IOS_SIZES)} iOS icons in {IOS_DIR}")
 
 
+MACOS_DIR = os.path.join(REPO_ROOT, "macos", "Runner", "Assets.xcassets", "AppIcon.appiconset")
+MACOS_SIZES = {
+    "app_icon_16.png": 16,
+    "app_icon_32.png": 32,
+    "app_icon_64.png": 64,
+    "app_icon_128.png": 128,
+    "app_icon_256.png": 256,
+    "app_icon_512.png": 512,
+    "app_icon_1024.png": 1024,
+}
+
+
+def generate_macos():
+    master = Image.open(MASTER_PNG)
+    for filename, size in MACOS_SIZES.items():
+        master.resize((size, size), Image.LANCZOS).save(os.path.join(MACOS_DIR, filename))
+    print(f"Generated {len(MACOS_SIZES)} macOS icons in {MACOS_DIR}")
+
+
 def main():
     extract_circle()
     generate_master()
     generate_ios()
+    generate_macos()
 
 
 if __name__ == "__main__":
