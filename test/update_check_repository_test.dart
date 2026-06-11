@@ -63,5 +63,14 @@ void main() {
       expect(info!.version, '1.1.0');
       expect(info.buildNumber, 11);
     });
+
+    test('fetchLatest returns null when the server responds with an error status', () async {
+      final client = MockClient((request) async => http.Response('Not Found', 404));
+      final repository = UpdateCheckRepository(client: client);
+
+      final info = await repository.fetchLatest();
+
+      expect(info, isNull);
+    });
   });
 }
