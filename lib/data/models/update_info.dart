@@ -19,4 +19,6 @@ class UpdateInfo {
       notes: json['notes'] as String? ?? '',
     );
   }
+
+  bool isNewerThan(int currentBuildNumber) => buildNumber > currentBuildNumber;
 }
