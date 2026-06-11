@@ -203,4 +203,38 @@ void main() {
       isTrue,
     );
   });
+
+  testWidgets('ProfilePage shows a check-failed message when the update check fails', (
+    WidgetTester tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    PackageInfo.setMockInitialValues(
+      appName: 'daylight',
+      packageName: 'com.kyomistudio.daylight',
+      version: '1.0.9',
+      buildNumber: '10',
+      buildSignature: '',
+      installerStore: null,
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          updateCheckViewModelProvider.overrideWith(
+            (ref) => UpdateCheckViewModel(repository: FakeUpdateCheckRepository(null)),
+          ),
+        ],
+        child: const MaterialApp(home: ProfilePage()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final strings = AppStrings.of('zh-TW');
+    await tester.ensureVisible(find.text(strings.appUpdateCheckButton));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(strings.appUpdateCheckButton));
+    await tester.pumpAndSettle();
+
+    expect(find.text(strings.appUpdateCheckFailed), findsOneWidget);
+  });
 }
