@@ -72,5 +72,14 @@ void main() {
 
       expect(info, isNull);
     });
+
+    test('fetchLatest returns null when the request throws', () async {
+      final client = MockClient((request) async => throw Exception('network error'));
+      final repository = UpdateCheckRepository(client: client);
+
+      final info = await repository.fetchLatest();
+
+      expect(info, isNull);
+    });
   });
 }
