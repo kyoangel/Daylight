@@ -9,6 +9,7 @@ class UpdateCheckState {
     this.currentBuildNumber = 0,
     this.isChecking = false,
     this.hasChecked = false,
+    this.checkFailed = false,
     this.latestInfo,
   });
 
@@ -16,6 +17,7 @@ class UpdateCheckState {
   final int currentBuildNumber;
   final bool isChecking;
   final bool hasChecked;
+  final bool checkFailed;
   final UpdateInfo? latestInfo;
 
   UpdateCheckState copyWith({
@@ -23,6 +25,7 @@ class UpdateCheckState {
     int? currentBuildNumber,
     bool? isChecking,
     bool? hasChecked,
+    bool? checkFailed,
     UpdateInfo? latestInfo,
   }) {
     return UpdateCheckState(
@@ -30,6 +33,7 @@ class UpdateCheckState {
       currentBuildNumber: currentBuildNumber ?? this.currentBuildNumber,
       isChecking: isChecking ?? this.isChecking,
       hasChecked: hasChecked ?? this.hasChecked,
+      checkFailed: checkFailed ?? this.checkFailed,
       latestInfo: latestInfo ?? this.latestInfo,
     );
   }
@@ -53,11 +57,12 @@ class UpdateCheckViewModel extends StateNotifier<UpdateCheckState> {
   }
 
   Future<void> checkForUpdate() async {
-    state = state.copyWith(isChecking: true);
+    state = state.copyWith(isChecking: true, checkFailed: false);
     final latest = await _repository.fetchLatest();
     state = state.copyWith(
       isChecking: false,
       hasChecked: true,
+      checkFailed: latest == null,
       latestInfo: latest,
     );
   }

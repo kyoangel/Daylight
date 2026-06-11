@@ -43,4 +43,15 @@ void main() {
     expect(viewModel.state.isChecking, isFalse);
     expect(viewModel.state.hasChecked, isTrue);
   });
+
+  test('checkForUpdate marks checkFailed when the repository returns no data', () async {
+    final viewModel = UpdateCheckViewModel(repository: FakeUpdateCheckRepository(null));
+    await Future<void>.delayed(Duration.zero);
+
+    await viewModel.checkForUpdate();
+
+    expect(viewModel.state.checkFailed, isTrue);
+    expect(viewModel.state.latestInfo, isNull);
+    expect(viewModel.state.hasChecked, isTrue);
+  });
 }
