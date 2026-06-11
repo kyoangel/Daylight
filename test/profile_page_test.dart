@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:daylight/providers/ad_status_provider.dart';
 import 'package:daylight/services/iap_service.dart';
@@ -74,5 +75,31 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('ProfilePage shows the App Update card with current version', (
+    WidgetTester tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    PackageInfo.setMockInitialValues(
+      appName: 'daylight',
+      packageName: 'com.kyomistudio.daylight',
+      version: '1.0.9',
+      buildNumber: '10',
+      buildSignature: '',
+      installerStore: null,
+    );
+
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MaterialApp(home: ProfilePage()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final strings = AppStrings.of('zh-TW');
+    expect(find.text(strings.appUpdateTitle), findsOneWidget);
+    expect(find.textContaining('1.0.9'), findsOneWidget);
+    expect(find.text(strings.appUpdateCheckButton), findsOneWidget);
   });
 }

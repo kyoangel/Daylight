@@ -25,6 +25,14 @@ class AppStrings {
   String get moodBaselineLabel => isEnglish ? 'Mood baseline' : '心情基準';
   String get toneLabel => isEnglish ? 'Support tone' : '陪伴語氣';
   String get languageToggleLabel => isEnglish ? 'App language' : '語言切換';
+
+  String get appUpdateTitle => isEnglish ? 'App Update' : 'App 更新';
+  String get appUpdateCurrentVersionLabel => isEnglish ? 'Current version' : '目前版本';
+  String get appUpdateCheckButton => isEnglish ? 'Check for updates' : '檢查更新';
+  String get appUpdateUpToDate => isEnglish ? 'You are using the latest version' : '已是最新版本';
+  String get appUpdateAvailableLabel => isEnglish ? 'New version available' : '發現新版本';
+  String get appUpdateDownloadButton => isEnglish ? 'Download' : '前往下載';
+  String get appUpdateCheckFailed => isEnglish ? 'Check failed. Please try again later.' : '檢查失敗，請稍後再試';
   String get removeAdsSectionTitle => isEnglish ? 'Remove Ads' : '去廣告';
   String get removeAdsUnlocked =>
       isEnglish ? 'Ads removed permanently' : '廣告已解鎖';

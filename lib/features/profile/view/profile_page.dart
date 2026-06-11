@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodel/profile_viewmodel.dart';
+import '../viewmodel/update_check_viewmodel.dart';
 import '../../../core/theme/theme_provider.dart';
 import '../../../core/theme/theme_model.dart';
 import '../../../common/app_strings.dart';
@@ -49,6 +50,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   Widget build(BuildContext context) {
     final profile = ref.watch(userProfileViewModelProvider);
     final vm = ref.read(userProfileViewModelProvider.notifier);
+    final updateState = ref.watch(updateCheckViewModelProvider);
+    final updateVm = ref.read(updateCheckViewModelProvider.notifier);
     final themeNotifier = ref.read(themeNotifierProvider.notifier);
     final appTheme = ref.watch(themeNotifierProvider);
     final adStatus = ref.watch(adStatusProvider);
@@ -300,6 +303,45 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     ),
                   ],
                 ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // --- App update ---
+            Card(
+              elevation: 0,
+              color: Colors.grey.shade50,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: BorderSide(color: Colors.grey.shade200),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      strings.appUpdateTitle,
+                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${strings.appUpdateCurrentVersionLabel}: ${updateState.currentVersion} (${updateState.currentBuildNumber})',
+                      style: const TextStyle(fontSize: 13, color: Colors.black54),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: updateState.isChecking
+                            ? null
+                            : () => updateVm.checkForUpdate(),
+                        icon: const Icon(Icons.refresh, size: 18),
+                        label: Text(strings.appUpdateCheckButton),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 32),
