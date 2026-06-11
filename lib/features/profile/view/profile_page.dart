@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../viewmodel/profile_viewmodel.dart';
 import '../viewmodel/update_check_viewmodel.dart';
 import '../../../core/theme/theme_provider.dart';
@@ -330,20 +331,35 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       style: const TextStyle(fontSize: 13, color: Colors.black54),
                     ),
                     const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: updateState.isChecking
-                            ? null
-                            : () => updateVm.checkForUpdate(),
-                        icon: const Icon(Icons.refresh, size: 18),
-                        label: Text(
-                          updateState.hasChecked
-                              ? strings.appUpdateUpToDate
-                              : strings.appUpdateCheckButton,
+                    if (updateState.hasUpdate) ...[
+                      Text(
+                        '${strings.appUpdateAvailableLabel}: ${updateState.latestInfo!.version}',
+                        style: const TextStyle(fontSize: 13, color: Colors.black87),
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () => _openDownloadUrl(updateState.latestInfo!.url),
+                          icon: const Icon(Icons.download_outlined, size: 18),
+                          label: Text(strings.appUpdateDownloadButton),
                         ),
                       ),
-                    ),
+                    ] else
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: updateState.isChecking
+                              ? null
+                              : () => updateVm.checkForUpdate(),
+                          icon: const Icon(Icons.refresh, size: 18),
+                          label: Text(
+                            updateState.hasChecked
+                                ? strings.appUpdateUpToDate
+                                : strings.appUpdateCheckButton,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -353,5 +369,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _openDownloadUrl(String url) async {
+    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
   }
 }
