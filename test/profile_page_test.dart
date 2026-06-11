@@ -8,6 +8,9 @@ import 'package:daylight/providers/ad_status_provider.dart';
 import 'package:daylight/services/iap_service.dart';
 import 'package:daylight/features/profile/view/profile_page.dart';
 import 'package:daylight/common/app_strings.dart';
+import 'package:daylight/data/models/update_info.dart';
+import 'package:daylight/features/profile/viewmodel/update_check_viewmodel.dart';
+import 'test_helpers/fake_update_check_repository.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 class FakeProfileStoreConnection implements StoreConnection {
@@ -101,5 +104,43 @@ void main() {
     expect(find.text(strings.appUpdateTitle), findsOneWidget);
     expect(find.textContaining('1.0.9'), findsOneWidget);
     expect(find.text(strings.appUpdateCheckButton), findsOneWidget);
+  });
+
+  testWidgets('ProfilePage shows up-to-date message after checking with no newer version', (
+    WidgetTester tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    PackageInfo.setMockInitialValues(
+      appName: 'daylight',
+      packageName: 'com.kyomistudio.daylight',
+      version: '1.0.9',
+      buildNumber: '10',
+      buildSignature: '',
+      installerStore: null,
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          updateCheckViewModelProvider.overrideWith(
+            (ref) => UpdateCheckViewModel(
+              repository: FakeUpdateCheckRepository(
+                const UpdateInfo(version: '1.0.9', buildNumber: 10, url: 'https://example.com', notes: ''),
+              ),
+            ),
+          ),
+        ],
+        child: const MaterialApp(home: ProfilePage()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final strings = AppStrings.of('zh-TW');
+    await tester.ensureVisible(find.text(strings.appUpdateCheckButton));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(strings.appUpdateCheckButton));
+    await tester.pumpAndSettle();
+
+    expect(find.text(strings.appUpdateUpToDate), findsOneWidget);
   });
 }

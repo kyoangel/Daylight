@@ -337,7 +337,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             ? null
                             : () => updateVm.checkForUpdate(),
                         icon: const Icon(Icons.refresh, size: 18),
-                        label: Text(strings.appUpdateCheckButton),
+                        label: Text(
+                          updateState.hasChecked
+                              ? strings.appUpdateUpToDate
+                              : strings.appUpdateCheckButton,
+                        ),
                       ),
                     ),
                   ],
