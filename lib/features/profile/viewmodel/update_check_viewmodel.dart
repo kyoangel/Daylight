@@ -7,18 +7,30 @@ class UpdateCheckState {
   const UpdateCheckState({
     this.currentVersion = '',
     this.currentBuildNumber = 0,
+    this.isChecking = false,
+    this.hasChecked = false,
+    this.latestInfo,
   });
 
   final String currentVersion;
   final int currentBuildNumber;
+  final bool isChecking;
+  final bool hasChecked;
+  final UpdateInfo? latestInfo;
 
   UpdateCheckState copyWith({
     String? currentVersion,
     int? currentBuildNumber,
+    bool? isChecking,
+    bool? hasChecked,
+    UpdateInfo? latestInfo,
   }) {
     return UpdateCheckState(
       currentVersion: currentVersion ?? this.currentVersion,
       currentBuildNumber: currentBuildNumber ?? this.currentBuildNumber,
+      isChecking: isChecking ?? this.isChecking,
+      hasChecked: hasChecked ?? this.hasChecked,
+      latestInfo: latestInfo ?? this.latestInfo,
     );
   }
 }
@@ -37,6 +49,16 @@ class UpdateCheckViewModel extends StateNotifier<UpdateCheckState> {
     state = state.copyWith(
       currentVersion: info.version,
       currentBuildNumber: int.tryParse(info.buildNumber) ?? 0,
+    );
+  }
+
+  Future<void> checkForUpdate() async {
+    state = state.copyWith(isChecking: true);
+    final latest = await _repository.fetchLatest();
+    state = state.copyWith(
+      isChecking: false,
+      hasChecked: true,
+      latestInfo: latest,
     );
   }
 }
