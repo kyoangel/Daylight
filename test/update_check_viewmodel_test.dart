@@ -54,4 +54,19 @@ void main() {
     expect(viewModel.state.latestInfo, isNull);
     expect(viewModel.state.hasChecked, isTrue);
   });
+
+  test('hasUpdate is true only when the latest build number is greater than the current one', () async {
+    const older = UpdateInfo(version: '1.0.9', buildNumber: 10, url: 'https://example.com', notes: '');
+    const newer = UpdateInfo(version: '1.1.0', buildNumber: 11, url: 'https://example.com', notes: '');
+
+    final upToDate = UpdateCheckViewModel(repository: FakeUpdateCheckRepository(older));
+    await Future<void>.delayed(Duration.zero);
+    await upToDate.checkForUpdate();
+    expect(upToDate.state.hasUpdate, isFalse);
+
+    final outOfDate = UpdateCheckViewModel(repository: FakeUpdateCheckRepository(newer));
+    await Future<void>.delayed(Duration.zero);
+    await outOfDate.checkForUpdate();
+    expect(outOfDate.state.hasUpdate, isTrue);
+  });
 }

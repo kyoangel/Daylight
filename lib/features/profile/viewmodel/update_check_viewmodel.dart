@@ -37,6 +37,9 @@ class UpdateCheckState {
       latestInfo: latestInfo ?? this.latestInfo,
     );
   }
+
+  bool get hasUpdate =>
+      latestInfo != null && latestInfo!.isNewerThan(currentBuildNumber);
 }
 
 class UpdateCheckViewModel extends StateNotifier<UpdateCheckState> {
