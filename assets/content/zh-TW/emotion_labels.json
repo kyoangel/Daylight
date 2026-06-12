@@ -1,0 +1,12 @@
+[
+  {"id": "em_happy",     "label": "開心", "tags": ["happy", "joyful"],          "colorHex": "#FFD166", "weight": 1},
+  {"id": "em_grateful",  "label": "感恩", "tags": ["grateful", "thankful"],     "colorHex": "#55EBBF", "weight": 1},
+  {"id": "em_fulfilled", "label": "充實", "tags": ["fulfilled", "content"],     "colorHex": "#74B9FF", "weight": 1},
+  {"id": "em_excited",   "label": "興奮", "tags": ["excited", "energized"],     "colorHex": "#FF9F43", "weight": 1},
+  {"id": "em_blissful",  "label": "幸福", "tags": ["blissful", "blessed"],      "colorHex": "#C8A2E8", "weight": 1},
+  {"id": "em_anxious",   "label": "焦慮", "tags": ["anxious", "worried"],       "colorHex": "#FFB347", "weight": 1},
+  {"id": "em_tired",     "label": "疲憊", "tags": ["tired", "exhausted"],       "colorHex": "#A8B5C8", "weight": 1},
+  {"id": "em_lonely",    "label": "孤獨", "tags": ["lonely", "isolated"],       "colorHex": "#7B9BB4", "weight": 1},
+  {"id": "em_irritable", "label": "煩躁", "tags": ["irritable", "frustrated"],  "colorHex": "#E07B7B", "weight": 1},
+  {"id": "em_sad",       "label": "難過", "tags": ["sad", "low"],               "colorHex": "#8B9DC3", "weight": 1}
+]

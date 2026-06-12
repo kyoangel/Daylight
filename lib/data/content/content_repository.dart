@@ -3,6 +3,9 @@ import 'models/affirmation.dart';
 import 'models/micro_task.dart';
 import 'models/mindfulness_guide.dart';
 import 'models/welcome_message.dart';
+import 'models/emotion_label.dart';
+import 'models/validation_message.dart';
+import 'models/reflective_prompt.dart';
 import 'content_loader.dart';
 import 'content_history_store.dart';
 import 'content_paths.dart';
@@ -43,6 +46,21 @@ class ContentRepository {
     return items.map(WelcomeMessage.fromJson).toList();
   }
 
+  Future<List<EmotionLabel>> loadEmotionLabels() async {
+    final items = await _loader.loadList(ContentPaths.emotionLabels(_locale));
+    return items.map(EmotionLabel.fromJson).toList();
+  }
+
+  Future<List<ValidationMessage>> loadValidations() async {
+    final items = await _loader.loadList(ContentPaths.validations(_locale));
+    return items.map(ValidationMessage.fromJson).toList();
+  }
+
+  Future<List<ReflectivePrompt>> loadReflectivePrompts() async {
+    final items = await _loader.loadList(ContentPaths.reflectivePrompts(_locale));
+    return items.map(ReflectivePrompt.fromJson).toList();
+  }
+
   Future<Affirmation?> pickAffirmation({List<String>? tags}) async {
     final items = await loadAffirmations();
     final recent = await _historyStore.readAffirmationIds();
@@ -73,6 +91,26 @@ class ContentRepository {
     return picked;
   }
 
+  Future<ValidationMessage?> pickValidation({List<String>? tags}) async {
+    final items = await loadValidations();
+    final recent = await _historyStore.readValidationIds();
+    final picked = _pickByTags(items, tags, recent);
+    if (picked != null) {
+      await _historyStore.writeValidationId(picked.id);
+    }
+    return picked;
+  }
+
+  Future<ReflectivePrompt?> pickReflectivePrompt({List<String>? tags}) async {
+    final items = await loadReflectivePrompts();
+    final recent = await _historyStore.readReflectivePromptIds();
+    final picked = _pickByTags(items, tags, recent);
+    if (picked != null) {
+      await _historyStore.writeReflectivePromptId(picked.id);
+    }
+    return picked;
+  }
+
   T? _pickByTags<T extends Object>(List<T> items, List<String>? tags, List<String> recentIds) {
     if (items.isEmpty) return null;
     final filtered = _filterByTags(items, tags);
@@ -99,6 +137,9 @@ class ContentRepository {
     if (item is MicroTask) return item.tags;
     if (item is MindfulnessGuide) return item.tags;
     if (item is WelcomeMessage) return item.tags;
+    if (item is EmotionLabel) return item.tags;
+    if (item is ValidationMessage) return item.tags;
+    if (item is ReflectivePrompt) return item.tags;
     return null;
   }
 
@@ -115,6 +156,9 @@ class ContentRepository {
     if (item is MicroTask) return item.id;
     if (item is MindfulnessGuide) return item.id;
     if (item is WelcomeMessage) return item.id;
+    if (item is EmotionLabel) return item.id;
+    if (item is ValidationMessage) return item.id;
+    if (item is ReflectivePrompt) return item.id;
     return null;
   }
 
@@ -123,6 +167,9 @@ class ContentRepository {
     if (item is MicroTask) return item.weight;
     if (item is MindfulnessGuide) return item.weight;
     if (item is WelcomeMessage) return item.weight;
+    if (item is EmotionLabel) return item.weight;
+    if (item is ValidationMessage) return item.weight;
+    if (item is ReflectivePrompt) return item.weight;
     return 1;
   }
 

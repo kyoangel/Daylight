@@ -1,0 +1,23 @@
+[
+  {"id": "rp_001", "text": "如果你的好朋友也有這樣的感受，你會對他說什麼？",         "tags": ["sad", "low", "lonely", "isolated"],           "weight": 2},
+  {"id": "rp_002", "text": "這個感受現在在你身體的哪裡？",                           "tags": ["anxious", "worried", "numb", "detached"],      "weight": 2},
+  {"id": "rp_003", "text": "今天真正發生了什麼？和你的想法之間有沒有一點距離？",      "tags": ["anxious", "worried", "irritable", "frustrated"],"weight": 2},
+  {"id": "rp_004", "text": "你現在最需要的是什麼？不一定要做到，只要知道就好。",      "tags": ["tired", "exhausted", "numb", "detached"],      "weight": 2},
+  {"id": "rp_005", "text": "有什麼是你今天還掌握得住的，哪怕很小？",                 "tags": ["anxious", "worried", "sad", "low"],             "weight": 2},
+  {"id": "rp_006", "text": "你對自己說的話，是你對一個在乎的人說話的方式嗎？",        "tags": ["irritable", "frustrated", "numb", "detached"], "weight": 1},
+  {"id": "rp_007", "text": "今天這個感受想告訴你什麼？",                              "tags": [],                                               "weight": 1},
+  {"id": "rp_008", "text": "這個難受是熟悉的嗎？以前你是怎麼走過去的？",              "tags": ["sad", "low", "lonely", "isolated"],            "weight": 1},
+  {"id": "rp_009", "text": "如果現在沒有壓力，你最想做什麼？",                        "tags": ["tired", "exhausted", "calm", "peaceful"],      "weight": 1},
+  {"id": "rp_010", "text": "你現在的狀態，是情況本身，還是情況加上疲憊？",             "tags": ["tired", "exhausted", "irritable", "frustrated"],"weight": 2},
+  {"id": "rp_011", "text": "此刻有沒有什麼，是你願意讓自己感謝的？",                  "tags": ["calm", "peaceful", "okay", "neutral"],         "weight": 2},
+  {"id": "rp_012", "text": "你今天給了自己什麼？",                                    "tags": [],                                               "weight": 1},
+  {"id": "rp_013", "text": "今天是什麼讓你感到開心的？",                              "tags": ["happy", "joyful"],                             "weight": 2},
+  {"id": "rp_014", "text": "這份快樂，你想和誰分享？",                                "tags": ["happy", "joyful", "blissful", "blessed"],      "weight": 2},
+  {"id": "rp_015", "text": "你感謝的事情背後，有什麼人或什麼力量？",                  "tags": ["grateful", "thankful"],                        "weight": 2},
+  {"id": "rp_016", "text": "這份感恩，可以怎麼轉化成一個小行動？",                    "tags": ["grateful", "thankful"],                        "weight": 1},
+  {"id": "rp_017", "text": "今天做了什麼，讓你有這種充實感？",                        "tags": ["fulfilled", "content"],                        "weight": 2},
+  {"id": "rp_018", "text": "這種踏實的感覺，你想在生活裡多創造嗎？",                  "tags": ["fulfilled", "content"],                        "weight": 1},
+  {"id": "rp_019", "text": "這份興奮的能量，你想拿來做什麼？",                        "tags": ["excited", "energized"],                        "weight": 2},
+  {"id": "rp_020", "text": "此刻的幸福，來自哪裡？",                                  "tags": ["blissful", "blessed"],                         "weight": 2},
+  {"id": "rp_021", "text": "你希望未來的自己記住今天什麼？",                          "tags": ["happy", "joyful", "blissful", "blessed", "fulfilled", "content"], "weight": 1}
+]

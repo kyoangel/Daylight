@@ -4,14 +4,20 @@ class ContentHistoryStore {
   static const _affKey = 'recent_affirmation_ids';
   static const _taskKey = 'recent_micro_task_ids';
   static const _guideKey = 'recent_mindfulness_ids';
+  static const _validationKey = 'recent_validation_ids';
+  static const _promptKey = 'recent_reflective_prompt_ids';
 
   Future<List<String>> readAffirmationIds() async => _readList(_affKey);
   Future<List<String>> readMicroTaskIds() async => _readList(_taskKey);
   Future<List<String>> readMindfulnessIds() async => _readList(_guideKey);
+  Future<List<String>> readValidationIds() async => _readList(_validationKey);
+  Future<List<String>> readReflectivePromptIds() async => _readList(_promptKey);
 
   Future<void> writeAffirmationId(String id) async => _writeList(_affKey, id);
   Future<void> writeMicroTaskId(String id) async => _writeList(_taskKey, id);
   Future<void> writeMindfulnessId(String id) async => _writeList(_guideKey, id);
+  Future<void> writeValidationId(String id) async => _writeList(_validationKey, id);
+  Future<void> writeReflectivePromptId(String id) async => _writeList(_promptKey, id);
 
   Future<List<String>> _readList(String key) async {
     final prefs = await SharedPreferences.getInstance();
