@@ -1,0 +1,7 @@
+# Copy this file to android/key.properties on your machine only.
+# Do not commit android/key.properties or the keystore file.
+
+storeFile=/absolute/path/to/daylight-upload-keystore.jks
+storePassword=replace-with-keystore-password
+keyAlias=daylight-upload
+keyPassword=replace-with-key-password
