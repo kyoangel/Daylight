@@ -4,7 +4,7 @@ import 'local_storage.dart';
 class DataMigrator {
   DataMigrator({LocalStorage? storage}) : _storage = storage ?? LocalStorage();
 
-  static const int latestVersion = 2;
+  static const int latestVersion = 3;
 
   final LocalStorage _storage;
 
@@ -20,6 +20,10 @@ class DataMigrator {
     if (version < 2) {
       await _migrateToV2();
       version = 2;
+    }
+    if (version < 3) {
+      await _migrateToV3();
+      version = 3;
     }
 
     await _storage.writeInt(DataKeys.dataVersion, version);
@@ -48,5 +52,10 @@ class DataMigrator {
     final updated = Map<String, dynamic>.from(profile);
     updated.putIfAbsent('toneStyle', () => 'gentle');
     await _storage.writeJson(DataKeys.userProfile, updated);
+  }
+
+  Future<void> _migrateToV3() async {
+    // DailyEntry gained optional fields (emotionLabels, emotionIntensity, eventNote).
+    // fromJson already handles missing keys with defaults, so no data rewrite needed.
   }
 }

@@ -19,4 +19,16 @@ void main() {
     expect(find.byIcon(Icons.send), findsOneWidget);
     expect(find.byType(ListView), findsOneWidget);
   });
+
+  testWidgets('CompanionPage does not render mode selector dropdown', (WidgetTester tester) async {
+    SharedPreferences.setMockInitialValues({});
+
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MaterialApp(home: CompanionPage()),
+      ),
+    );
+
+    expect(find.byType(DropdownButton<String>), findsNothing);
+  });
 }

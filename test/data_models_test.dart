@@ -67,6 +67,97 @@ void main() {
     expect(decoded.nightReflection, entry.nightReflection);
   });
 
+  test('DailyEntry with emotion fields json roundtrip', () {
+    final entry = DailyEntry(
+      date: DateTime(2026, 5, 23),
+      moodScore: 4,
+      microTaskId: '',
+      microTaskDone: false,
+      affirmationId: '',
+      nightReflection: '',
+      emotionLabels: ['em_anxious', 'em_tired'],
+      emotionIntensity: 4,
+      eventNote: '今天工作壓力很大',
+    );
+
+    final json = entry.toJson();
+    final decoded = DailyEntry.fromJson(json);
+
+    expect(decoded.emotionLabels, ['em_anxious', 'em_tired']);
+    expect(decoded.emotionIntensity, 4);
+    expect(decoded.eventNote, '今天工作壓力很大');
+  });
+
+  test('DailyEntry from old JSON without new fields uses defaults', () {
+    final oldJson = <String, dynamic>{
+      'date': '2026-01-01',
+      'moodScore': 6,
+      'microTaskId': 'task_001',
+      'microTaskDone': false,
+      'affirmationId': 'aff_001',
+      'nightReflection': '',
+    };
+    final decoded = DailyEntry.fromJson(oldJson);
+
+    expect(decoded.emotionLabels, isEmpty);
+    expect(decoded.emotionIntensity, isNull);
+    expect(decoded.eventNote, isNull);
+  });
+
+  test('DailyEntry derivedMoodScore for negative emotions returns negative', () {
+    final entry = DailyEntry(
+      date: DateTime(2026, 5, 23),
+      moodScore: 5,
+      microTaskId: '',
+      microTaskDone: false,
+      affirmationId: '',
+      nightReflection: '',
+      emotionLabels: ['em_anxious'],
+      emotionIntensity: 4,
+    );
+    expect(entry.derivedMoodScore, -4);
+  });
+
+  test('DailyEntry derivedMoodScore for positive emotions returns positive', () {
+    final entry = DailyEntry(
+      date: DateTime(2026, 5, 23),
+      moodScore: 5,
+      microTaskId: '',
+      microTaskDone: false,
+      affirmationId: '',
+      nightReflection: '',
+      emotionLabels: ['em_happy'],
+      emotionIntensity: 3,
+    );
+    expect(entry.derivedMoodScore, 3);
+  });
+
+  test('DailyEntry derivedMoodScore for mixed emotions returns -2..+2', () {
+    final entry = DailyEntry(
+      date: DateTime(2026, 5, 23),
+      moodScore: 5,
+      microTaskId: '',
+      microTaskDone: false,
+      affirmationId: '',
+      nightReflection: '',
+      emotionLabels: ['em_happy', 'em_anxious'],
+      emotionIntensity: 5,
+    );
+    expect(entry.derivedMoodScore, 2); // intensity 5 → 5-3=2
+  });
+
+  test('DailyEntry derivedMoodScore maps legacy moodScore to -5..+5 when no emotion labels', () {
+    final entry = DailyEntry(
+      date: DateTime(2026, 5, 23),
+      moodScore: 7,
+      microTaskId: '',
+      microTaskDone: false,
+      affirmationId: '',
+      nightReflection: '',
+    );
+    expect(entry.derivedMoodScore, 2); // 7 - 5 = 2
+  });
+
   test('DiaryEntry json roundtrip', () {
     final entry = DiaryEntry(
       id: 'diary_1',

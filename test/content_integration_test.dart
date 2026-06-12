@@ -18,7 +18,7 @@ void main() {
     );
 
     final strings = AppStrings.of('zh-TW');
-    expect(find.text(strings.todayAffirmation), findsOneWidget);
+    expect(find.text(strings.emotionSectionTitle), findsOneWidget);
   });
 
   testWidgets('DiaryPage shows mindfulness section', (WidgetTester tester) async {

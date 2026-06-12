@@ -59,6 +59,19 @@ class AppStrings {
   String get historyYesterday => isEnglish ? 'Yesterday' : '昨天';
   String get viewHistory => isEnglish ? 'View past records →' : '查看過往紀錄 →';
 
+  String get emotionSectionTitle => isEnglish ? 'How are you feeling?' : '今天的你';
+  String get emotionChipHint => isEnglish ? 'Pick the one that resonates most' : '選最有感的一個';
+  String get intensityLabel => isEnglish ? 'How strong is this feeling?' : '這個感受有多強？';
+  String get eventNoteHint => isEnglish ? 'What happened today that had an impact? (optional)' : '今天發生了什麼讓你有感覺的事？（可略）';
+  String get companionResponseTitle => isEnglish ? 'A word for you' : '陪你的一句話';
+  String get saveButtonLabel => isEnglish ? 'Record today' : '記錄今天';
+  String get updateButtonLabel => isEnglish ? 'Update today' : '更新今天的紀錄';
+  String get trendSectionTitle => isEnglish ? 'Mood Trend' : '心情趨勢';
+  String get trendTabDaily => isEnglish ? 'Daily' : '每日';
+  String get trendTabWeekly => isEnglish ? 'Weekly' : '每週';
+  String get trendTabMonthly => isEnglish ? 'Monthly' : '每月';
+  String get companionContextLabel => isEnglish ? 'Based on your recent feelings' : '根據你最近的感受';
+  String get noEmotionSelected => isEnglish ? 'Select a feeling above to get a personalized response.' : '選擇上方的感受，就能看到個人化的陪伴回應。';
   String get weeklyTrend => isEnglish ? 'Weekly Mood Trend' : '本週心情趨勢';
   String get noRecords => isEnglish ? 'No records yet' : '尚無紀錄';
   String get todayMood => isEnglish ? 'Today Mood' : '今日心情';
