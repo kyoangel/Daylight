@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../ads/banner_ad_overlay.dart';
 import '../core/theme/theme_provider.dart';
 import '../common/app_strings.dart';
 import '../common/locale_provider.dart';
-import '../providers/ad_status_provider.dart';
 import '../features/onboarding/view/onboarding_page.dart';
 import '../features/daily/view/daily_page.dart';
 import '../features/diary/view/diary_page.dart';
@@ -78,36 +76,29 @@ class _MainNavigationState extends ConsumerState<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(adStatusProvider);
     final locale = ref.watch(localeProvider);
     final strings = AppStrings.of(locale);
     return Scaffold(
       body: _pages[_currentIndex],
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const BannerAdOverlay(),
-          BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-            items: [
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.wb_sunny),
-                label: strings.navDaily,
-              ),
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.book),
-                label: strings.navDiary,
-              ),
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.person),
-                label: strings.navProfile,
-              ),
-            ],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.wb_sunny),
+            label: strings.navDaily,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.book),
+            label: strings.navDiary,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.person),
+            label: strings.navProfile,
           ),
         ],
       ),

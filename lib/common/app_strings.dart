@@ -33,16 +33,6 @@ class AppStrings {
   String get appUpdateAvailableLabel => isEnglish ? 'New version available' : '發現新版本';
   String get appUpdateDownloadButton => isEnglish ? 'Download' : '前往下載';
   String get appUpdateCheckFailed => isEnglish ? 'Check failed. Please try again later.' : '檢查失敗，請稍後再試';
-  String get removeAdsSectionTitle => isEnglish ? 'Remove Ads' : '去廣告';
-  String get removeAdsUnlocked =>
-      isEnglish ? 'Ads removed permanently' : '廣告已解鎖';
-  String get restorePurchase => isEnglish ? 'Restore Purchase' : '回復購買';
-  String removeAdsButtonLabel(String priceLabel) =>
-      isEnglish ? '$priceLabel Remove ads forever' : '$priceLabel 移除永久廣告';
-  String get purchasePending => isEnglish ? 'Purchase pending...' : '購買處理中...';
-  String get restoringPurchase =>
-      isEnglish ? 'Restoring purchase...' : '正在回復購買...';
-  String get storeUnavailable => isEnglish ? 'Store unavailable' : '商店目前不可用';
 
   String get onboardingWelcome => isEnglish ? 'Welcome' : '歡迎';
   String get onboardingWelcomeBody =>
