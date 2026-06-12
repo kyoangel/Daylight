@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../viewmodel/profile_viewmodel.dart';
 import '../viewmodel/update_check_viewmodel.dart';
@@ -7,7 +12,9 @@ import '../../../core/theme/theme_provider.dart';
 import '../../../core/theme/theme_model.dart';
 import '../../../common/app_strings.dart';
 import '../../../common/locale_provider.dart';
-import '../../../providers/ad_status_provider.dart';
+import '../../../features/daily/viewmodel/daily_viewmodel.dart';
+import '../../../data/models/daily_entry.dart';
+import '../../../data/repositories/daily_repository.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
@@ -55,7 +62,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final updateVm = ref.read(updateCheckViewModelProvider.notifier);
     final themeNotifier = ref.read(themeNotifierProvider.notifier);
     final appTheme = ref.watch(themeNotifierProvider);
-    final adStatus = ref.watch(adStatusProvider);
     final locale = ref.watch(localeProvider);
     final strings = AppStrings.of(locale);
     if (_nicknameController.text != profile.nickname &&
@@ -207,103 +213,47 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               },
             ),
             const SizedBox(height: 32),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                strings.removeAdsSectionTitle,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+
+            // --- Data backup ---
+            Card(
+              elevation: 0,
+              color: Colors.grey.shade50,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: BorderSide(color: Colors.grey.shade200),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('資料備份',
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 4),
+                    Text('換手機前請先匯出，再到新手機匯入。',
+                        style: TextStyle(fontSize: 13, color: Colors.black54)),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () => _exportData(context),
+                            icon: const Icon(Icons.upload_outlined, size: 18),
+                            label: const Text('匯出資料'),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () => _importData(context),
+                            icon: const Icon(Icons.download_outlined, size: 18),
+                            label: const Text('匯入資料'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: appTheme.color.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (adStatus.isAdRemoved)
-                    Text(
-                      strings.removeAdsUnlocked,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
-                  else ...[
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed:
-                            adStatus.canPurchase
-                                ? () =>
-                                    ref
-                                        .read(adStatusProvider.notifier)
-                                        .purchaseRemoveAds()
-                                : null,
-                        child: Text(
-                          adStatus.isPurchasePending
-                              ? strings.purchasePending
-                              : strings.removeAdsButtonLabel(
-                                adStatus.priceLabel,
-                              ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton(
-                        onPressed:
-                            adStatus.isRestoring
-                                ? null
-                                : () =>
-                                    ref
-                                        .read(adStatusProvider.notifier)
-                                        .restorePurchases(),
-                        child: Text(
-                          adStatus.isRestoring
-                              ? strings.restoringPurchase
-                              : strings.restorePurchase,
-                        ),
-                      ),
-                    ),
-                  ],
-                  if (!adStatus.isStoreAvailable && !adStatus.isLoading)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: Text(
-                        strings.storeUnavailable,
-                        style: const TextStyle(color: Colors.black54),
-                      ),
-                    ),
-                  if (adStatus.statusMessage != null) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      adStatus.statusMessage!,
-                      style: TextStyle(
-                        color: appTheme.color,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                  if (adStatus.errorMessage != null) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      adStatus.errorMessage!,
-                      style: const TextStyle(
-                        color: Colors.redAccent,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ],
               ),
             ),
             const SizedBox(height: 16),
@@ -376,4 +326,82 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   Future<void> _openDownloadUrl(String url) async {
     await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
   }
+
+  Future<void> _exportData(BuildContext context) async {
+    try {
+      final repo = DailyRepository();
+      final entries = await repo.loadAll();
+      if (entries.isEmpty) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('目前沒有任何紀錄可以匯出')),
+          );
+        }
+        return;
+      }
+      final json = jsonEncode(entries.map((e) => e.toJson()).toList());
+      final dir = await getTemporaryDirectory();
+      final now = DateTime.now();
+      final filename =
+          'daylight_${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}.json';
+      final file = File('${dir.path}/$filename');
+      await file.writeAsString(json);
+      await Share.shareXFiles(
+        [XFile(file.path, mimeType: 'application/json')],
+        subject: 'Daylight 資料備份',
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('匯出失敗：$e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _importData(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('匯入資料'),
+        content: const Text('匯入後同日期的紀錄會被覆蓋，其他日期保留。確定繼續？'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('取消')),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('確定')),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+      if (result == null || result.files.single.path == null) return;
+
+      final file = File(result.files.single.path!);
+      final content = await file.readAsString();
+      final List<dynamic> raw = jsonDecode(content);
+      final entries = raw.map((e) => DailyEntry.fromJson(e as Map<String, dynamic>)).toList();
+
+      final vm = ref.read(dailyViewModelProvider.notifier);
+      for (final entry in entries) {
+        await vm.upsertEntry(entry);
+      }
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('已匯入 ${entries.length} 筆紀錄')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('匯入失敗：請確認選取的是正確的備份檔案')),
+        );
+      }
+    }
+  }
+
 }
