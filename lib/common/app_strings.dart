@@ -52,6 +52,13 @@ class AppStrings {
           : '這不是醫療服務，如有緊急狀況請使用 SOS。';
 
   String get dailyTitle => isEnglish ? 'Mood Daily' : '心情日記';
+  String get historyTitle => isEnglish ? 'My Records' : '過往紀錄';
+  String get historyEmpty => isEnglish ? 'No records yet. Try logging how you feel today.' : '目前還沒有紀錄，試著記錄今天的感受吧。';
+  String get historyMoodFallback => isEnglish ? 'Mood' : '心情';
+  String get historyToday => isEnglish ? 'Today' : '今天';
+  String get historyYesterday => isEnglish ? 'Yesterday' : '昨天';
+  String get viewHistory => isEnglish ? 'View past records →' : '查看過往紀錄 →';
+
   String get weeklyTrend => isEnglish ? 'Weekly Mood Trend' : '本週心情趨勢';
   String get noRecords => isEnglish ? 'No records yet' : '尚無紀錄';
   String get todayMood => isEnglish ? 'Today Mood' : '今日心情';
