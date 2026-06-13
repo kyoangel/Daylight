@@ -12,10 +12,10 @@ MASTER_PNG = os.path.join(SOURCE_DIR, "app_icon_master_1024.png")
 
 # Bounding box (left, top, right, bottom) of the blue circle artwork within
 # app_icon_original.jpg, measured by color-sampling the source image.
-CIRCLE_BBOX = (400, 78, 1006, 686)  # 606 x 608 px
+CIRCLE_BBOX = (297, 93, 699, 495)  # 402 x 402 px
 
-# Dominant blue sampled from the circle interior (#4DA0D6).
-BG_COLOR = (77, 160, 214)
+# Dominant blue sampled from the circle interior (#4D98CF).
+BG_COLOR = (77, 152, 207)
 
 
 def extract_circle():
